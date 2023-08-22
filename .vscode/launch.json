@@ -2,13 +2,21 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug AVA",
             "type": "node",
             "request": "launch",
+            "name": "Debug AVA test file",
             "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/ava",
-            "program": "${file}",
-            "outputCapture": "std"
- }
+            "runtimeArgs": [
+                "debug",
+                "--break",
+                "${file}"
+            ],
+            "port": 9229,
+            "outputCapture": "std",
+            "skipFiles": [
+                "<node_internals>/**/*.js"
+            ]
+        }
     ]
   }
   

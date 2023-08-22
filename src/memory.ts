@@ -2,26 +2,26 @@ import base from '@memoryts/base';
 import { DataTypeConstructor, DataType, TArray } from './memoryTypes';
 
 export function read<T extends DataType>(
-  constructor: DataTypeConstructor<T>,
+  constructor: DataTypeConstructor<T> | [DataTypeConstructor<T>, number],
   processHandler: base.ExternalObject<HANDLE>,
   address: number
-): T {
-  const data = new constructor();
-  const buffer = base.readBuffer(processHandler, address, data.byteSize);
-  data.setBuffer(buffer);
-  return data;
-}
+): T | TArray<T> {
+  let itemType: DataTypeConstructor<T>;
+  let length = 1;
+  let retVal: T | TArray<T>;
 
-export function readArray<T extends DataType>(
-  dataType: [DataTypeConstructor<T>, number],
-  processHandler: base.ExternalObject<any>,
-  address: number
-): TArray<T> {
-  const [itemType, length] = dataType;
-  const array = new TArray(itemType, length);
-  const buffer = base.readBuffer(processHandler, address, array.size);
-  array.setBuffer(buffer);
-  return array;
+  if (Array.isArray(constructor)) {
+    [itemType, length] = constructor;
+    retVal = new TArray(itemType, length);
+  } else {
+    itemType = constructor;
+    retVal = new itemType();
+  }
+
+  const buffer = base.readBuffer(processHandler, address, retVal.bufferSize);
+  retVal.setBuffer(buffer);
+
+  return retVal as TArray<T>;
 }
 
 export default {

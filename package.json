@@ -58,6 +58,7 @@
   },
   "homepage": "https://github.com/ryansonshine/#readme",
   "devDependencies": {
+    "@ava/typescript": "^4.1.0",
     "@ryansonshine/commitizen": "^4.2.8",
     "@ryansonshine/cz-conventional-changelog": "^3.3.4",
     "@swc-node/register": "^1.6.7",
