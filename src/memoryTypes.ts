@@ -1,89 +1,188 @@
+import { resizeBuffer } from './util';
+
 export abstract class DataType {
-  protected buffer: Buffer;
-  abstract bufferSize: number;
+  protected _buffer: Buffer;
 
-  constructor() {
-    this.buffer = Buffer.alloc(0);
+  constructor(value?: Uint8Array) {
+    this._buffer = Buffer.from(!value ? [] : value);
   }
 
-  setBuffer(buffer: Buffer): void {
-    this.buffer = buffer;
+  public get rawValue(): Buffer {
+    return this._buffer;
   }
 
-  abstract get value(): any;
+  public get size(): number {
+    return this._buffer.length;
+  }
+
+  abstract get value(): number | boolean | string;
 }
 
 export class Bit extends DataType {
-  readonly bufferSize = 1;
+  constructor(value?: Uint8Array) {
+    super(value);
+    if (!value) {
+      this._buffer = Buffer.alloc(1);
+    } else {
+      this._buffer = resizeBuffer(this._buffer, 1);
+    }
+  }
   override get value(): number {
-    return this.buffer[0] & 1;
+    return this._buffer[0] & 1;
   }
 }
 
 export class Bool extends DataType {
-  readonly bufferSize = 1;
+  constructor(value?: Uint8Array) {
+    super(value);
+    if (!value) {
+      this._buffer = Buffer.alloc(1);
+    } else {
+      this._buffer = resizeBuffer(this._buffer, 1);
+    }
+  }
   override get value(): boolean {
-    return this.buffer[0] === 1;
+    return (this._buffer[0] & 1) === 1;
   }
 }
 
 export class Char extends DataType {
-  readonly bufferSize = 1;
+  constructor(value?: Uint8Array) {
+    super(value);
+    if (!value) {
+      this._buffer = Buffer.alloc(1);
+    } else {
+      this._buffer = resizeBuffer(this._buffer, 1);
+    }
+  }
   override get value(): string {
-    return String.fromCharCode(this.buffer[0]);
+    return String.fromCharCode(this._buffer[0]);
   }
 }
 
 export class Short extends DataType {
-  readonly bufferSize = 2;
+  constructor(value?: Uint8Array) {
+    super(value);
+    if (!value) {
+      this._buffer = Buffer.alloc(2);
+    } else {
+      this._buffer = resizeBuffer(this._buffer, 2);
+    }
+  }
   override get value(): number {
-    return (this.buffer[1] << 8) | (this.buffer[0] << 0);
+    return (this._buffer[1] << 8) | (this._buffer[0] << 0);
   }
 }
 
 export class Int8 extends DataType {
-  readonly bufferSize = 4;
+  constructor(value?: Uint8Array) {
+    super(value);
+    if (!value) {
+      this._buffer = Buffer.alloc(1);
+    } else {
+      this._buffer = resizeBuffer(this._buffer, 1);
+    }
+  }
   override get value(): number {
-    return this.buffer.readInt8(0);
+    return this._buffer.readInt8();
+  }
+}
+
+export class Int16 extends DataType {
+  constructor(value?: Uint8Array) {
+    super(value);
+    if (!value) {
+      this._buffer = Buffer.alloc(2);
+    } else {
+      this._buffer = resizeBuffer(this._buffer, 2);
+    }
+  }
+  override get value(): number {
+    return this._buffer.readInt16LE();
+  }
+}
+
+export class Int32 extends DataType {
+  constructor(value?: Uint8Array) {
+    super(value);
+    if (!value) {
+      this._buffer = Buffer.alloc(4);
+    } else {
+      this._buffer = resizeBuffer(this._buffer, 4);
+    }
+  }
+  override get value(): number {
+    return this._buffer.readInt32LE();
+  }
+}
+
+export class UInt8 extends DataType {
+  constructor(value?: Uint8Array) {
+    super(value);
+    if (!value) {
+      this._buffer = Buffer.alloc(1);
+    } else {
+      this._buffer = resizeBuffer(this._buffer, 1);
+    }
+  }
+  override get value(): number {
+    return this._buffer.readUInt8();
+  }
+}
+
+export class UInt16 extends DataType {
+  constructor(value?: Uint8Array) {
+    super(value);
+    if (!value) {
+      this._buffer = Buffer.alloc(2);
+    } else {
+      this._buffer = resizeBuffer(this._buffer, 2);
+    }
+  }
+  override get value(): number {
+    return this._buffer.readUInt16LE();
+  }
+}
+
+export class UInt32 extends DataType {
+  constructor(value?: Uint8Array) {
+    super(value);
+    if (!value) {
+      this._buffer = Buffer.alloc(4);
+    } else {
+      this._buffer = resizeBuffer(this._buffer, 4);
+    }
+  }
+  override get value(): number {
+    return this._buffer.readUInt32LE();
   }
 }
 
 export class Float extends DataType {
-  readonly bufferSize = 4;
+  constructor(value?: Uint8Array) {
+    super(value);
+    if (!value) {
+      this._buffer = Buffer.alloc(4);
+    } else {
+      this._buffer = resizeBuffer(this._buffer, 4);
+    }
+  }
   override get value(): number {
-    return this.buffer.readFloatLE(0);
+    return this._buffer.readFloatLE();
   }
 }
 
 export class Double extends DataType {
-  readonly bufferSize = 8;
-  override get value(): number {
-    return this.buffer.readDoubleLE(0);
-  }
-}
-
-export class TArray<T extends DataType> extends DataType {
-  private elementSize: number;
-  readonly bufferSize: number;
-
-  constructor(private itemType: DataTypeConstructor<T>, public length: number) {
-    super();
-    this.elementSize = new this.itemType().bufferSize;
-    this.bufferSize = this.elementSize * length;
-  }
-
-  get value(): T[] {
-    const result: T[] = [];
-    for (let i = 0; i < this.length; i++) {
-      const itemBuffer = this.buffer.slice(
-        i * this.elementSize,
-        (i + 1) * this.elementSize
-      );
-      const item = new this.itemType();
-      item.setBuffer(itemBuffer);
-      result.push(item);
+  constructor(value?: Uint8Array) {
+    super(value);
+    if (!value) {
+      this._buffer = Buffer.alloc(8);
+    } else {
+      this._buffer = resizeBuffer(this._buffer, 8);
     }
-    return result;
+  }
+  override get value(): number {
+    return this._buffer.readDoubleLE();
   }
 }
 

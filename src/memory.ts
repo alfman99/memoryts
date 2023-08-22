@@ -1,27 +1,53 @@
 import base from '@memoryts/base';
-import { DataTypeConstructor, DataType, TArray } from './memoryTypes';
+import { DataTypeConstructor, DataType } from './memoryTypes';
 
 export function read<T extends DataType>(
   constructor: DataTypeConstructor<T> | [DataTypeConstructor<T>, number],
   processHandler: base.ExternalObject<HANDLE>,
   address: number
-): T | TArray<T> {
+): T | T[] {
   let itemType: DataTypeConstructor<T>;
   let length = 1;
-  let retVal: T | TArray<T>;
+  let retVal: T | T[];
+  let bytesToRead: number;
 
   if (Array.isArray(constructor)) {
     [itemType, length] = constructor;
-    retVal = new TArray(itemType, length);
+    retVal = new Array(length);
+    bytesToRead = retVal[0].size * length;
   } else {
     itemType = constructor;
     retVal = new itemType();
+    bytesToRead = retVal.size;
   }
 
-  const buffer = base.readBuffer(processHandler, address, retVal.bufferSize);
-  retVal.setBuffer(buffer);
+  const buffer = base.readBuffer(processHandler, address, bytesToRead);
 
-  return retVal as TArray<T>;
+  if (Array.isArray(retVal)) {
+    for (let i = 0; i < length; i++) {
+      const item = retVal[i];
+      const itemBuffer = buffer.slice(i * item.size, (i + 1) * item.size);
+      retVal[i] = new itemType(Uint8Array.from(itemBuffer));
+    }
+  } else {
+    retVal = new itemType(Uint8Array.from(buffer));
+  }
+
+  return retVal;
+}
+
+export function write<T extends DataType>(
+  processHandler: base.ExternalObject<HANDLE>,
+  address: number,
+  value: T | T[]
+): void {
+  if (Array.isArray(value)) {
+    value.map((v, i) => {
+      base.writeBuffer(processHandler, address + i * v.size, v.rawValue);
+    });
+  } else {
+    base.writeBuffer(processHandler, address, value.rawValue);
+  }
 }
 
 export default {
