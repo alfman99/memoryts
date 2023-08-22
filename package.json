@@ -13,7 +13,6 @@
     "clean": "rm -rf ./lib/",
     "cm": "cz",
     "lint": "eslint ./src/ --fix",
-    "prepare": "husky install",
     "semantic-release": "semantic-release",
     "test": "ava",
     "typecheck": "tsc --noEmit"
@@ -37,7 +36,6 @@
     "typescript",
     "vscode",
     "ava",
-    "husky",
     "commitizen",
     "semantic-release",
     "codecov"
@@ -72,7 +70,6 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.4.0",
-    "husky": "^6.0.0",
     "lint-staged": "^13.2.1",
     "prettier": "^2.2.1",
     "semantic-release": "^21.0.1",
