@@ -2,7 +2,7 @@
 import test from 'ava';
 
 import base from '@memoryts/base';
-import { Char, TArray } from '../src/memoryTypes';
+import { Char } from '../src/memoryTypes';
 import { read } from '../src/memory';
 
 test('read memory from process array of chars', t => {
@@ -10,7 +10,7 @@ test('read memory from process array of chars', t => {
     const processHandler = base.openProcessName('Notepad.exe');
     const address = 0x7fff33db3930;
 
-    const buffer = read([TArray, 10], processHandler, address);
+    const buffer = read([Char, 10], processHandler, address);
 
     console.error(buffer.value);
 
