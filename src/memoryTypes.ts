@@ -250,4 +250,38 @@ export class Double extends DataType {
   }
 }
 
+// export class UTF8String extends DataType {
+//   constructor(value?: string | Uint8Array | number) {
+//     super();
+//     if (typeof value === 'string') {
+//       this._buffer = Buffer.from(value, 'utf8');
+//     } else if (value instanceof Uint8Array) {
+//       this._buffer = Buffer.from(value);
+//     } else if (typeof value === 'number') {
+//       this._buffer = Buffer.alloc(value);
+//     } else {
+//       this._buffer = Buffer.alloc(0);
+//     }
+//   }
+//   override get value(): string {
+//     return this._buffer.toString('utf8');
+//   }
+// }
+
+// export class UTF16String extends DataType {
+//   constructor(value?: string | Uint8Array) {
+//     super();
+//     if (typeof value === 'string') {
+//       this._buffer = Buffer.from(value, 'utf16le');
+//     } else if (value instanceof Uint8Array) {
+//       this._buffer = Buffer.from(value);
+//     } else {
+//       this._buffer = Buffer.alloc(0);
+//     }
+//   }
+//   override get value(): string {
+//     return this._buffer.toString('utf16le');
+//   }
+// }
+
 export type DataTypeConstructor<T extends DataType> = new (...args: any[]) => T;
