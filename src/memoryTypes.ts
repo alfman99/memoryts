@@ -1,5 +1,3 @@
-import { resizeBuffer } from './util';
-
 export abstract class DataType {
   protected _buffer!: Buffer;
 
