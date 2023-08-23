@@ -1,10 +1,14 @@
-export function resizeBuffer(nodeBuffer: Buffer, targetSize: number): Buffer {
-  if (nodeBuffer.length === targetSize) {
-    return nodeBuffer;
-  } else if (nodeBuffer.length < targetSize) {
-    const padding = Buffer.alloc(targetSize - nodeBuffer.length);
-    return Buffer.concat([nodeBuffer, padding]);
-  } else {
-    return nodeBuffer.slice(0, targetSize);
-  }
+import base from '../../base-memoryts';
+
+export function Architecture(): 'x64' | 'x32' {
+  return base.is64BitProcess() ? 'x64' : 'x32';
 }
+
+export function RunningPrivileged(): boolean {
+  return base.isElevatedProcess();
+}
+
+export default {
+  Architecture,
+  RunningPrivileged,
+};

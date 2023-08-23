@@ -1,61 +1,62 @@
 import base from '../../base-memoryts';
-import { DataTypeConstructor, DataType } from './memoryTypes';
+import { DataType, DataTypeConstructor } from './memoryTypes';
 
-export function read<T extends DataType>(
-  constructor: DataTypeConstructor<T> | [DataTypeConstructor<T>, number],
-  processHandler: base.ExternalObject<unknown>,
-  address: number
-): T | T[] {
-  let itemType: DataTypeConstructor<T>;
-  let length = 1;
-  let retVal: T | T[];
-  let bytesOfType: number;
-  let bytesToRead: number;
+export function Read<T extends DataType>(
+  constructor: DataTypeConstructor<T>,
+  processHandler: Handle,
+  address: MemoryAddress
+): T {
+  const itemType = constructor;
+  const bytesOfType = new itemType().rawBuffer.length;
 
-  if (Array.isArray(constructor)) {
-    [itemType, length] = constructor;
-    retVal = new Array(length);
-    bytesOfType = new itemType().rawBuffer.length;
-    bytesToRead = bytesOfType * length;
-  } else {
-    itemType = constructor;
-    retVal = new itemType();
-    bytesOfType = retVal.rawBuffer.length;
-    bytesToRead = bytesOfType * 1;
-  }
+  const buffer = base.readBuffer(processHandler, address, bytesOfType);
+
+  return new itemType(Uint8Array.from(buffer));
+}
+
+export function ReadArray<T extends DataType>(
+  constructor: [DataTypeConstructor<T>, number],
+  processHandler: Handle,
+  address: MemoryAddress
+): T[] {
+  const [itemType, length] = constructor;
+  const retVal = new Array(length);
+  const bytesOfType = new itemType().rawBuffer.length;
+  const bytesToRead = bytesOfType * length;
 
   const buffer = base.readBuffer(processHandler, address, bytesToRead);
 
-  if (Array.isArray(retVal)) {
-    for (let i = 0; i < length; i++) {
-      const itemBuffer = buffer.slice(i * bytesOfType, (i + 1) * bytesOfType);
-      retVal[i] = new itemType(Uint8Array.from(itemBuffer));
-    }
-  } else {
-    retVal = new itemType(Uint8Array.from(buffer));
+  for (let i = 0; i < length; i++) {
+    const itemBuffer = buffer.slice(i * bytesOfType, (i + 1) * bytesOfType);
+    retVal[i] = new itemType(Uint8Array.from(itemBuffer));
   }
 
   return retVal;
 }
 
-export function write<T extends DataType>(
-  processHandler: base.ExternalObject<HANDLE>,
-  address: number,
-  value: T | T[]
+export function Write<T extends DataType>(
+  processHandler: Handle,
+  address: MemoryAddress,
+  value: T
 ): void {
-  if (Array.isArray(value)) {
-    value.map((v, i) => {
-      base.writeBuffer(
-        processHandler,
-        address + i * v.rawBuffer.length,
-        v.rawBuffer
-      );
-    });
-  } else {
-    base.writeBuffer(processHandler, address, value.rawBuffer);
-  }
+  return base.writeBuffer(processHandler, address, value.rawBuffer);
+}
+
+export function WriteArray<T extends DataType>(
+  processHandler: Handle,
+  address: MemoryAddress,
+  values: T[]
+): void {
+  return base.writeBuffer(
+    processHandler,
+    address,
+    Buffer.concat(values.map(v => v.rawBuffer))
+  );
 }
 
 export default {
-  read,
+  Read,
+  ReadArray,
+  Write,
+  WriteArray,
 };

@@ -6,11 +6,15 @@ export abstract class DataType {
     return this._buffer;
   }
 
+  public equals(other: DataType): boolean {
+    return this._buffer.equals(other.rawBuffer);
+  }
+
   // Representation of the bytes in human readable format
   abstract get value(): Buffer | number | boolean | string;
 }
 
-export class Raw extends DataType {
+export class ByteBuffer extends DataType {
   constructor(value?: Uint8Array) {
     super();
     if (value instanceof Uint8Array) {
