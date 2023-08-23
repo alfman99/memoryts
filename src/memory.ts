@@ -14,11 +14,11 @@ export function read<T extends DataType>(
   if (Array.isArray(constructor)) {
     [itemType, length] = constructor;
     retVal = new Array(length);
-    bytesToRead = retVal[0].size * length;
+    bytesToRead = retVal[0].rawBuffer.length * length;
   } else {
     itemType = constructor;
     retVal = new itemType();
-    bytesToRead = retVal.size;
+    bytesToRead = retVal.rawBuffer.length;
   }
 
   const buffer = base.readBuffer(processHandler, address, bytesToRead);
@@ -26,7 +26,10 @@ export function read<T extends DataType>(
   if (Array.isArray(retVal)) {
     for (let i = 0; i < length; i++) {
       const item = retVal[i];
-      const itemBuffer = buffer.slice(i * item.size, (i + 1) * item.size);
+      const itemBuffer = buffer.slice(
+        i * item.rawBuffer.length,
+        (i + 1) * item.rawBuffer.length
+      );
       retVal[i] = new itemType(Uint8Array.from(itemBuffer));
     }
   } else {
@@ -43,10 +46,14 @@ export function write<T extends DataType>(
 ): void {
   if (Array.isArray(value)) {
     value.map((v, i) => {
-      base.writeBuffer(processHandler, address + i * v.size, v.rawValue);
+      base.writeBuffer(
+        processHandler,
+        address + i * v.rawBuffer.length,
+        v.rawBuffer
+      );
     });
   } else {
-    base.writeBuffer(processHandler, address, value.rawValue);
+    base.writeBuffer(processHandler, address, value.rawBuffer);
   }
 }
 

@@ -43,19 +43,15 @@ test('write all datatypes', () => {
   try {
     const processHandler = base.openProcessName(PROCESS_NAME);
 
-    write(
-      processHandler,
-      ADDRESS,
-      new Bit(new Uint8Array([1, 2, 3, 4, 5, 6, 7]))
-    );
-    write(processHandler, ADDRESS, new Bool(new Uint8Array([1])));
-    write(processHandler, ADDRESS, new Char(new Uint8Array([1])));
-    write(processHandler, ADDRESS, new Short(new Uint8Array([1])));
-    write(processHandler, ADDRESS, new Int8(new Uint8Array([1])));
-    write(processHandler, ADDRESS, new Int16(new Uint8Array([1])));
-    write(processHandler, ADDRESS, new Int32(new Uint8Array([1])));
-    write(processHandler, ADDRESS, new Float(new Uint8Array([1])));
-    write(processHandler, ADDRESS, new Double(new Uint8Array([1])));
+    write(processHandler, ADDRESS, new Bit(1));
+    write(processHandler, ADDRESS, new Bool(true));
+    write(processHandler, ADDRESS, new Char('a'));
+    write(processHandler, ADDRESS, new Short(45));
+    write(processHandler, ADDRESS, new Int8(6));
+    write(processHandler, ADDRESS, new Int16(234));
+    write(processHandler, ADDRESS, new Int32(66));
+    write(processHandler, ADDRESS, new Float(123.213));
+    write(processHandler, ADDRESS, new Double(2135.1235));
   } catch (e) {
     console.error(e);
   }
