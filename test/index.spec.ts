@@ -1,5 +1,5 @@
+import { Read, ReadArray, Write } from '../src/memory';
 import {
-  Bit,
   Bool,
   Char,
   Double,
@@ -8,13 +8,13 @@ import {
   Int32,
   Int8,
   Short,
+  UInt16,
+  UInt32,
+  UInt8,
 } from '../src/memoryTypes';
-import { Architecture, RunningPrivileged } from '../src/util';
-
-import { Read, ReadArray, Write } from '../src/memory';
-import { OpenProcess } from '../src/process';
-
 import { FindModule } from '../src/module';
+import { OpenProcess } from '../src/process';
+import { Architecture, RunningPrivileged } from '../src/util';
 
 const PROCESS_NAME = 'Notepad.exe';
 
@@ -28,7 +28,7 @@ test('check if running privileged', () => {
 
 test('read string utf16le', () => {
   const processHandle = OpenProcess('Notepad.exe');
-  const charArray = ReadArray([Char, 20], processHandle, 0x7ffb07ba3930);
+  const charArray = ReadArray([Char, 20], processHandle, 0x7ff8c48f3930);
   console.log(charArray.rawBuffer.toString('utf16le'));
 });
 
@@ -42,26 +42,32 @@ test('calculate static pointer from module (textinputframework.dll) and read and
 
     const results: boolean[] = [];
 
-    Write(handler, ADDRESS, new Bit(1));
-    results.push(Read(Bit, handler, ADDRESS).equals(new Bit(1)));
-
     Write(handler, ADDRESS, new Bool(false));
     results.push(Read(Bool, handler, ADDRESS).equals(new Bool(false)));
 
     Write(handler, ADDRESS, new Char('-'));
     results.push(Read(Char, handler, ADDRESS).equals(new Char('-')));
 
-    Write(handler, ADDRESS, new Short(45));
-    results.push(Read(Short, handler, ADDRESS).equals(new Short(45)));
+    Write(handler, ADDRESS, new Short(55));
+    results.push(Read(Short, handler, ADDRESS).equals(new Short(55)));
 
-    Write(handler, ADDRESS, new Int8(6));
-    results.push(Read(Int8, handler, ADDRESS).equals(new Int8(6)));
+    Write(handler, ADDRESS, new Int8(-6));
+    results.push(Read(Int8, handler, ADDRESS).equals(new Int8(-6)));
 
-    Write(handler, ADDRESS, new Int16(234));
-    results.push(Read(Int16, handler, ADDRESS).equals(new Int16(234)));
+    Write(handler, ADDRESS, new UInt8(6));
+    results.push(Read(UInt8, handler, ADDRESS).equals(new UInt8(6)));
 
-    Write(handler, ADDRESS, new Int32(66));
-    results.push(Read(Int32, handler, ADDRESS).equals(new Int32(66)));
+    Write(handler, ADDRESS, new Int16(-234));
+    results.push(Read(Int16, handler, ADDRESS).equals(new Int16(-234)));
+
+    Write(handler, ADDRESS, new UInt16(234));
+    results.push(Read(UInt16, handler, ADDRESS).equals(new UInt16(234)));
+
+    Write(handler, ADDRESS, new Int32(-66));
+    results.push(Read(Int32, handler, ADDRESS).equals(new Int32(-66)));
+
+    Write(handler, ADDRESS, new UInt32(66));
+    results.push(Read(UInt32, handler, ADDRESS).equals(new UInt32(66)));
 
     Write(handler, ADDRESS, new Float(123.213));
     results.push(Read(Float, handler, ADDRESS).equals(new Float(123.213)));

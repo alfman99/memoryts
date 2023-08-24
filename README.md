@@ -12,36 +12,28 @@ MemoryTS is a powerful TypeScript package designed to provide developers with a 
 
 - [x] Memory
   - [x] Read memory from a process
-    - [x] ByteBuffer
-    - [x] Bit
     - [x] Bool
-    - [x] Char
-    - [x] Short
-    - [x] Int8
-    - [x] Int16
-    - [x] Int32
+    - [x] Int8 [Byte, Char]
     - [x] UInt8
-    - [x] UInt16
-    - [x] UInt32
+    - [x] Int16 [Short]
+    - [x] UInt16 [UShort]
+    - [x] Int32 [Int, Long]
+    - [x] UInt32 [UInt, ULong, DWord]
     - [x] Float
     - [x] Double
-    - [x] Arrays
+    - Arrays of all the types above
 
   - [x] Write memory to a process
-    - [x] ByteBuffer
-    - [x] Bit
     - [x] Bool
-    - [x] Char
-    - [x] Short
-    - [x] Int8
-    - [x] Int16
-    - [x] Int32
+    - [x] Int8 [Byte, Char]
     - [x] UInt8
-    - [x] UInt16
-    - [x] UInt32
+    - [x] Int16 [Short]
+    - [x] UInt16 [UShort]
+    - [x] Int32 [Int, Long]
+    - [x] UInt32 [UInt, ULong, DWord]
     - [x] Float
     - [x] Double
-    - [x] Arrays
+    - Arrays of all the types above
 
 - [x] Modules
   - [x] Find a module in a specified process 

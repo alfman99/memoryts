@@ -1,3 +1,5 @@
+import { ResizeBuffer } from './util';
+
 export abstract class DataType {
   protected _buffer!: Buffer;
 
@@ -22,193 +24,234 @@ export abstract class DataType {
   abstract get value(): Buffer | number | string | boolean | DataType[];
 }
 
-export class ByteBuffer extends DataType {
-  constructor(value?: Uint8Array | Buffer) {
+export abstract class OneByte extends DataType {
+  constructor(value?: any) {
     super(value);
-    if (typeof value === 'undefined') this._buffer = Buffer.alloc(1);
-  }
-  override get value(): Buffer {
-    return this._buffer;
-  }
-}
-
-export class Bit extends DataType {
-  constructor(value?: 1 | 0 | Uint8Array | Buffer) {
-    super(value);
-    if (typeof value === 'number') {
+    if (!Buffer.isBuffer(value) && !(value instanceof Uint8Array))
       this._buffer = Buffer.alloc(1);
-      this._buffer.writeUInt8(value);
-    } else if (typeof value === 'undefined') this._buffer = Buffer.alloc(1);
+    else {
+      this._buffer = ResizeBuffer(this._buffer, 1);
+    }
   }
-  override get value(): 1 | 0 {
-    return this._buffer[0] & 1 ? 1 : 0;
-  }
+  abstract get value(): any;
 }
 
-export class Bool extends DataType {
+export abstract class TwoBytes extends DataType {
+  constructor(value?: any) {
+    super(value);
+    if (!Buffer.isBuffer(value) && !(value instanceof Uint8Array))
+      this._buffer = Buffer.alloc(2);
+    else {
+      this._buffer = ResizeBuffer(this._buffer, 2);
+    }
+  }
+  abstract get value(): any;
+}
+
+export abstract class FourBytes extends DataType {
+  constructor(value?: any) {
+    super(value);
+    if (!Buffer.isBuffer(value) && !(value instanceof Uint8Array))
+      this._buffer = Buffer.alloc(4);
+    else {
+      this._buffer = ResizeBuffer(this._buffer, 4);
+    }
+  }
+  abstract get value(): any;
+}
+
+export abstract class EightBytes extends DataType {
+  constructor(value?: any) {
+    super(value);
+    if (!Buffer.isBuffer(value) && !(value instanceof Uint8Array))
+      this._buffer = Buffer.alloc(8);
+    else {
+      this._buffer = ResizeBuffer(this._buffer, 8);
+    }
+  }
+  abstract get value(): any;
+}
+
+export class Bool extends OneByte {
   constructor(value?: boolean | Uint8Array | Buffer) {
     super(value);
     if (typeof value === 'boolean') {
-      this._buffer = Buffer.alloc(1);
       this._buffer.writeUInt8(value ? 1 : 0);
-    } else if (typeof value === 'undefined') this._buffer = Buffer.alloc(1);
+    }
   }
   override get value(): boolean {
-    return this._buffer[0] === 1;
+    return this._buffer[0] & 1 ? true : false;
   }
 }
 
-// Will only read the first character
-export class Char extends DataType {
-  constructor(value?: string | Uint8Array | Buffer) {
-    super(value);
-    if (typeof value === 'string') {
-      this._buffer = Buffer.alloc(1);
-      this._buffer.write(value);
-    } else if (typeof value === 'undefined') this._buffer = Buffer.alloc(1);
-  }
-  override get value(): string {
-    return String.fromCharCode(this._buffer[0]);
-  }
-}
-
-export class Short extends DataType {
+export class Int8 extends OneByte {
   constructor(value?: number | Uint8Array | Buffer) {
     super(value);
     if (typeof value === 'number') {
-      if (value < -32768 || value > 32767)
-        throw new Error('Short value must be between -32768 and 32767');
-      this._buffer = Buffer.alloc(2);
-      this._buffer.writeInt16LE(value);
-    } else if (typeof value === 'undefined') this._buffer = Buffer.alloc(2);
-  }
-  override get value(): number {
-    return this._buffer.readInt16LE();
-  }
-}
-
-export class Int8 extends DataType {
-  constructor(value?: number | Uint8Array | Buffer) {
-    super(value);
-    if (typeof value === 'number') {
-      if (value < -128 || value > 127)
-        throw new Error('Int8 value must be between -128 and 127');
-      this._buffer = Buffer.alloc(1);
       this._buffer.writeInt8(value);
-    } else if (typeof value === 'undefined') this._buffer = Buffer.alloc(1);
+    }
   }
   override get value(): number {
     return this._buffer.readInt8();
   }
 }
 
-export class Int16 extends DataType {
+export class Byte extends OneByte {
   constructor(value?: number | Uint8Array | Buffer) {
     super(value);
     if (typeof value === 'number') {
-      if (value < -32768 || value > 32767)
-        throw new Error('Int16 value must be between -32768 and 32767');
-
-      this._buffer = Buffer.alloc(2);
-      this._buffer.writeInt16LE(value);
-    } else if (typeof value === 'undefined') this._buffer = Buffer.alloc(2);
-  }
-  override get value(): number {
-    return this._buffer.readInt16LE();
-  }
-}
-
-export class Int32 extends DataType {
-  constructor(value?: number | Uint8Array | Buffer) {
-    super(value);
-    if (typeof value === 'number') {
-      if (value < -2147483648 || value > 2147483647)
-        throw new Error(
-          'Int32 value must be between -2147483648 and 2147483647'
-        );
-      this._buffer = Buffer.alloc(4);
-      this._buffer.writeInt32LE(value);
-    } else if (typeof value === 'undefined') this._buffer = Buffer.alloc(4);
-  }
-  override get value(): number {
-    return this._buffer.readInt32LE();
-  }
-}
-
-export class UInt8 extends DataType {
-  constructor(value?: number | Uint8Array | Buffer) {
-    super(value);
-    if (typeof value === 'number') {
-      if (value < 0 || value > 255)
-        throw new Error('UInt8 value must be between 0 and 255');
-      this._buffer = Buffer.alloc(1);
       this._buffer.writeUInt8(value);
-    } else if (typeof value === 'undefined') this._buffer = Buffer.alloc(1);
+    }
   }
   override get value(): number {
     return this._buffer.readUInt8();
   }
 }
 
-export class UInt16 extends DataType {
+export class Char extends OneByte {
+  constructor(value?: string | Uint8Array | Buffer) {
+    super(value);
+    if (typeof value === 'string') {
+      this._buffer.write(value[0]);
+    }
+  }
+  override get value(): string {
+    return this._buffer.toString();
+  }
+}
+
+export class UInt8 extends OneByte {
   constructor(value?: number | Uint8Array | Buffer) {
     super(value);
     if (typeof value === 'number') {
-      if (value < 0 || value > 65535)
-        throw new Error('UInt16 value must be between 0 and 65535');
-      this._buffer = Buffer.alloc(2);
+      this._buffer.writeUInt8(value);
+    }
+  }
+  override get value(): number {
+    return this._buffer.readUInt8();
+  }
+}
+
+export class Int16 extends TwoBytes {
+  constructor(value?: number | Uint8Array | Buffer) {
+    super(value);
+    if (typeof value === 'number') {
+      this._buffer.writeInt16LE(value);
+    }
+  }
+  override get value(): number {
+    return this._buffer.readInt16LE();
+  }
+}
+
+// Other names for Int16
+export class Short extends Int16 {}
+
+export class UInt16 extends TwoBytes {
+  constructor(value?: number | Uint8Array | Buffer) {
+    super(value);
+    if (typeof value === 'number') {
       this._buffer.writeUInt16LE(value);
-    } else if (typeof value === 'undefined') this._buffer = Buffer.alloc(2);
+    }
   }
   override get value(): number {
     return this._buffer.readUInt16LE();
   }
 }
 
-export class UInt32 extends DataType {
+// Other names for UInt16
+export class UShort extends UInt16 {}
+
+export class Int32 extends FourBytes {
   constructor(value?: number | Uint8Array | Buffer) {
     super(value);
     if (typeof value === 'number') {
-      if (value < 0 || value > 4294967295)
-        throw new Error('UInt32 value must be between 0 and 4294967295');
-      this._buffer = Buffer.alloc(4);
+      this._buffer.writeInt32LE(value);
+    }
+  }
+  override get value(): number {
+    return this._buffer.readInt32LE();
+  }
+}
+
+// Other names for Int32
+export class Int extends Int32 {}
+export class Long extends Int32 {}
+
+export class UInt32 extends FourBytes {
+  constructor(value?: number | Uint8Array | Buffer) {
+    super(value);
+    if (typeof value === 'number') {
       this._buffer.writeUInt32LE(value);
-    } else if (typeof value === 'undefined') this._buffer = Buffer.alloc(4);
+    }
   }
   override get value(): number {
     return this._buffer.readUInt32LE();
   }
 }
 
-export class Float extends DataType {
+// Other names for UInt32
+export class UInt extends UInt32 {}
+export class ULong extends UInt32 {}
+export class DWord extends UInt32 {}
+
+export class Float extends FourBytes {
   constructor(value?: number | Uint8Array | Buffer) {
     super(value);
     if (typeof value === 'number') {
-      if (value < -3.40282347e38 || value > 3.40282347e38)
-        throw new Error(
-          'Float value must be between -3.40282347e+38 and 3.40282347e+38'
-        );
       this._buffer = Buffer.alloc(4);
       this._buffer.writeFloatLE(value);
-    } else if (typeof value === 'undefined') this._buffer = Buffer.alloc(4);
+    }
   }
   override get value(): number {
     return this._buffer.readFloatLE();
   }
 }
 
-export class Double extends DataType {
+export class Double extends EightBytes {
   constructor(value?: number | Uint8Array | Buffer) {
     super(value);
     if (typeof value === 'number') {
       this._buffer = Buffer.alloc(8);
       this._buffer.writeDoubleLE(value);
-    } else if (typeof value === 'undefined') this._buffer = Buffer.alloc(8);
+    }
   }
   override get value(): number {
     return this._buffer.readDoubleLE();
   }
 }
+
+export class Int64 extends EightBytes {
+  constructor(value?: bigint | Uint8Array | Buffer) {
+    super(value);
+    if (typeof value === 'bigint') {
+      this._buffer = Buffer.alloc(8);
+      this._buffer.writeBigInt64LE(value);
+    }
+  }
+  override get value(): bigint {
+    return this._buffer.readBigInt64LE();
+  }
+}
+
+// Other names for Int64
+export class LongLong extends Int64 {}
+
+export class UInt64 extends EightBytes {
+  constructor(value?: bigint | Uint8Array | Buffer) {
+    super(value);
+    if (typeof value === 'bigint') {
+      this._buffer = Buffer.alloc(8);
+      this._buffer.writeBigUInt64LE(value);
+    }
+  }
+  override get value(): bigint {
+    return this._buffer.readBigUInt64LE();
+  }
+}
+
+// Other names for UInt64
+export class ULongLong extends UInt64 {}
 
 export class TArray<T extends DataType> extends DataType {
   private _type: DataTypeConstructor<T>;
@@ -232,39 +275,5 @@ export class TArray<T extends DataType> extends DataType {
     return result;
   }
 }
-
-// export class UTF8String extends DataType {
-//   constructor(value?: string | Uint8Array | number) {
-//     super(value);
-//     if (typeof value === 'string') {
-//       this._buffer = Buffer.from(value, 'utf8');
-//     } else if (value instanceof Uint8Array) {
-//       this._buffer = Buffer.from(value);
-//     } else if (typeof value === 'number') {
-//       this._buffer = Buffer.alloc(value);
-//     } else {
-//       this._buffer = Buffer.alloc(0);
-//     }
-//   }
-//   override get value(): string {
-//     return this._buffer.toString('utf8');
-//   }
-// }
-
-// export class UTF16String extends DataType {
-//   constructor(value?: string | Uint8Array) {
-//     super(value);
-//     if (typeof value === 'string') {
-//       this._buffer = Buffer.from(value, 'utf16le');
-//     } else if (value instanceof Uint8Array) {
-//       this._buffer = Buffer.from(value);
-//     } else {
-//       this._buffer = Buffer.alloc(0);
-//     }
-//   }
-//   override get value(): string {
-//     return this._buffer.toString('utf16le');
-//   }
-// }
 
 export type DataTypeConstructor<T extends DataType> = new (...args: any[]) => T;
