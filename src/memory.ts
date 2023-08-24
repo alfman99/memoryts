@@ -1,7 +1,10 @@
 import base from '../../base-memoryts';
 import { DataType, DataTypeConstructor, TArray } from './memoryTypes';
 
-export function Read<T extends DataType>(
+export function Read<
+  T extends DataType<U>,
+  U extends string | number | bigint | boolean
+>(
   constructor: DataTypeConstructor<T>,
   processHandler: Handle,
   address: MemoryAddress
@@ -14,11 +17,14 @@ export function Read<T extends DataType>(
   return new itemType(Uint8Array.from(buffer));
 }
 
-export function ReadArray<T extends DataType>(
+export function ReadArray<
+  T extends DataType<U>,
+  U extends string | number | bigint | boolean
+>(
   constructor: [DataTypeConstructor<T>, number],
   processHandler: Handle,
   address: MemoryAddress
-): TArray<T> {
+): TArray<T, U> {
   const [itemType, length] = constructor;
   const retVal = new Array(length);
   const bytesOfType = new itemType().rawBuffer.length;
@@ -34,18 +40,20 @@ export function ReadArray<T extends DataType>(
   return new TArray(constructor, retVal);
 }
 
-export function Write<T extends DataType>(
-  processHandler: Handle,
-  address: MemoryAddress,
-  value: T
-): void {
+export function Write<
+  T extends DataType<U>,
+  U extends string | number | bigint | boolean
+>(processHandler: Handle, address: MemoryAddress, value: T): void {
   return base.writeBuffer(processHandler, address, value.rawBuffer);
 }
 
-export function WriteArray<T extends DataType>(
+export function WriteArray<
+  T extends DataType<U>,
+  U extends string | number | bigint | boolean
+>(
   processHandler: Handle,
   address: MemoryAddress,
-  values: T[] | TArray<T>
+  values: T[] | TArray<T, U>
 ): void {
   if (values instanceof TArray) {
     return base.writeBuffer(processHandler, address, values.rawBuffer);

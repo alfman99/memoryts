@@ -15,10 +15,10 @@ MemoryTS is a powerful TypeScript package designed to provide developers with a 
     - [x] Bool
     - [x] Int8 [Byte, Char]
     - [x] UInt8
-    - [x] Int16 [Short]
-    - [x] UInt16 [UShort]
-    - [x] Int32 [Int, Long]
-    - [x] UInt32 [UInt, ULong, DWord]
+    - [x] Int16
+    - [x] UInt16
+    - [x] Int32
+    - [x] UInt32
     - [x] Float
     - [x] Double
     - Arrays of all the types above
@@ -27,10 +27,10 @@ MemoryTS is a powerful TypeScript package designed to provide developers with a 
     - [x] Bool
     - [x] Int8 [Byte, Char]
     - [x] UInt8
-    - [x] Int16 [Short]
-    - [x] UInt16 [UShort]
-    - [x] Int32 [Int, Long]
-    - [x] UInt32 [UInt, ULong, DWord]
+    - [x] Int16
+    - [x] UInt16
+    - [x] Int32
+    - [x] UInt32
     - [x] Float
     - [x] Double
     - Arrays of all the types above

@@ -1,6 +1,6 @@
 import { ResizeBuffer } from './util';
 
-export abstract class DataType {
+export abstract class DataType<U extends number | bigint | string | boolean> {
   protected _buffer!: Buffer;
 
   constructor(value?: any) {
@@ -16,15 +16,15 @@ export abstract class DataType {
     return this._buffer;
   }
 
-  public equals(other: DataType): boolean {
+  public equals(other: DataType<U>): boolean {
     return this._buffer.equals(other.rawBuffer);
   }
 
   // Representation of the bytes in human readable format
-  abstract get value(): Buffer | number | string | boolean | DataType[];
+  abstract get value(): U | U[];
 }
 
-export abstract class OneByte extends DataType {
+export abstract class OneByte extends DataType<string | boolean | number> {
   constructor(value?: any) {
     super(value);
     if (!Buffer.isBuffer(value) && !(value instanceof Uint8Array))
@@ -33,10 +33,10 @@ export abstract class OneByte extends DataType {
       this._buffer = ResizeBuffer(this._buffer, 1);
     }
   }
-  abstract get value(): any;
+  abstract get value(): string | boolean | number;
 }
 
-export abstract class TwoBytes extends DataType {
+export abstract class TwoBytes extends DataType<number> {
   constructor(value?: any) {
     super(value);
     if (!Buffer.isBuffer(value) && !(value instanceof Uint8Array))
@@ -45,10 +45,10 @@ export abstract class TwoBytes extends DataType {
       this._buffer = ResizeBuffer(this._buffer, 2);
     }
   }
-  abstract get value(): any;
+  abstract get value(): number;
 }
 
-export abstract class FourBytes extends DataType {
+export abstract class FourBytes extends DataType<number> {
   constructor(value?: any) {
     super(value);
     if (!Buffer.isBuffer(value) && !(value instanceof Uint8Array))
@@ -57,10 +57,10 @@ export abstract class FourBytes extends DataType {
       this._buffer = ResizeBuffer(this._buffer, 4);
     }
   }
-  abstract get value(): any;
+  abstract get value(): number;
 }
 
-export abstract class EightBytes extends DataType {
+export abstract class EightBytes extends DataType<number | bigint> {
   constructor(value?: any) {
     super(value);
     if (!Buffer.isBuffer(value) && !(value instanceof Uint8Array))
@@ -69,7 +69,7 @@ export abstract class EightBytes extends DataType {
       this._buffer = ResizeBuffer(this._buffer, 8);
     }
   }
-  abstract get value(): any;
+  abstract get value(): number | bigint;
 }
 
 export class Bool extends OneByte {
@@ -144,9 +144,6 @@ export class Int16 extends TwoBytes {
   }
 }
 
-// Other names for Int16
-export class Short extends Int16 {}
-
 export class UInt16 extends TwoBytes {
   constructor(value?: number | Uint8Array | Buffer) {
     super(value);
@@ -158,9 +155,6 @@ export class UInt16 extends TwoBytes {
     return this._buffer.readUInt16LE();
   }
 }
-
-// Other names for UInt16
-export class UShort extends UInt16 {}
 
 export class Int32 extends FourBytes {
   constructor(value?: number | Uint8Array | Buffer) {
@@ -174,10 +168,6 @@ export class Int32 extends FourBytes {
   }
 }
 
-// Other names for Int32
-export class Int extends Int32 {}
-export class Long extends Int32 {}
-
 export class UInt32 extends FourBytes {
   constructor(value?: number | Uint8Array | Buffer) {
     super(value);
@@ -190,10 +180,31 @@ export class UInt32 extends FourBytes {
   }
 }
 
-// Other names for UInt32
-export class UInt extends UInt32 {}
-export class ULong extends UInt32 {}
-export class DWord extends UInt32 {}
+export class Int64 extends EightBytes {
+  constructor(value?: bigint | Uint8Array | Buffer) {
+    super(value);
+    if (typeof value === 'bigint') {
+      this._buffer = Buffer.alloc(8);
+      this._buffer.writeBigInt64LE(value);
+    }
+  }
+  override get value(): bigint {
+    return this._buffer.readBigInt64LE();
+  }
+}
+
+export class UInt64 extends EightBytes {
+  constructor(value?: bigint | Uint8Array | Buffer) {
+    super(value);
+    if (typeof value === 'bigint') {
+      this._buffer = Buffer.alloc(8);
+      this._buffer.writeBigUInt64LE(value);
+    }
+  }
+  override get value(): bigint {
+    return this._buffer.readBigUInt64LE();
+  }
+}
 
 export class Float extends FourBytes {
   constructor(value?: number | Uint8Array | Buffer) {
@@ -221,39 +232,10 @@ export class Double extends EightBytes {
   }
 }
 
-export class Int64 extends EightBytes {
-  constructor(value?: bigint | Uint8Array | Buffer) {
-    super(value);
-    if (typeof value === 'bigint') {
-      this._buffer = Buffer.alloc(8);
-      this._buffer.writeBigInt64LE(value);
-    }
-  }
-  override get value(): bigint {
-    return this._buffer.readBigInt64LE();
-  }
-}
-
-// Other names for Int64
-export class LongLong extends Int64 {}
-
-export class UInt64 extends EightBytes {
-  constructor(value?: bigint | Uint8Array | Buffer) {
-    super(value);
-    if (typeof value === 'bigint') {
-      this._buffer = Buffer.alloc(8);
-      this._buffer.writeBigUInt64LE(value);
-    }
-  }
-  override get value(): bigint {
-    return this._buffer.readBigUInt64LE();
-  }
-}
-
-// Other names for UInt64
-export class ULongLong extends UInt64 {}
-
-export class TArray<T extends DataType> extends DataType {
+export class TArray<
+  T extends DataType<U>,
+  U extends number | bigint | string | boolean
+> extends DataType<U> {
   private _type: DataTypeConstructor<T>;
   private _length: number;
 
@@ -263,17 +245,19 @@ export class TArray<T extends DataType> extends DataType {
     this._buffer = Buffer.concat(value.map(v => v.rawBuffer));
   }
 
-  get value(): T[] {
-    const result: T[] = [];
+  override get value(): U[] {
+    const retVal: U[] = [];
     for (let i = 0; i < this._length; i++) {
       const itemBuffer = this._buffer.slice(
         i * new this._type().rawBuffer.length,
         (i + 1) * new this._type().rawBuffer.length
       );
-      result.push(new this._type(Uint8Array.from(itemBuffer)));
+      retVal[i] = new this._type(Uint8Array.from(itemBuffer)).value as U;
     }
-    return result;
+    return retVal;
   }
 }
 
-export type DataTypeConstructor<T extends DataType> = new (...args: any[]) => T;
+export type DataTypeConstructor<
+  T extends DataType<number | bigint | string | boolean>
+> = new (...args: any[]) => T;
