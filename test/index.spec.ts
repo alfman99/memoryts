@@ -11,7 +11,7 @@ import {
 } from '../src/memoryTypes';
 import { Architecture, RunningPrivileged } from '../src/util';
 
-import { Read, Write } from '../src/memory';
+import { Read, ReadArray, Write } from '../src/memory';
 import { OpenProcess } from '../src/process';
 
 import { FindModule } from '../src/module';
@@ -24,6 +24,12 @@ test('check architecture', () => {
 
 test('check if running privileged', () => {
   expect(RunningPrivileged()).toEqual(true);
+});
+
+test('read string utf16le', () => {
+  const processHandle = OpenProcess('Notepad.exe');
+  const charArray = ReadArray([Char, 20], processHandle, 0x7ffb07ba3930);
+  console.log(charArray.rawBuffer.toString('utf16le'));
 });
 
 test('calculate static pointer from module (textinputframework.dll) and read and write all datatypes', () => {

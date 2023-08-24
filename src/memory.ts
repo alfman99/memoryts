@@ -1,5 +1,5 @@
 import base from '../../base-memoryts';
-import { DataType, DataTypeConstructor } from './memoryTypes';
+import { DataType, DataTypeConstructor, TArray } from './memoryTypes';
 
 export function Read<T extends DataType>(
   constructor: DataTypeConstructor<T>,
@@ -18,7 +18,7 @@ export function ReadArray<T extends DataType>(
   constructor: [DataTypeConstructor<T>, number],
   processHandler: Handle,
   address: MemoryAddress
-): T[] {
+): TArray<T> {
   const [itemType, length] = constructor;
   const retVal = new Array(length);
   const bytesOfType = new itemType().rawBuffer.length;
@@ -31,7 +31,7 @@ export function ReadArray<T extends DataType>(
     retVal[i] = new itemType(Uint8Array.from(itemBuffer));
   }
 
-  return retVal;
+  return new TArray(constructor, retVal);
 }
 
 export function Write<T extends DataType>(
@@ -45,13 +45,17 @@ export function Write<T extends DataType>(
 export function WriteArray<T extends DataType>(
   processHandler: Handle,
   address: MemoryAddress,
-  values: T[]
+  values: T[] | TArray<T>
 ): void {
-  return base.writeBuffer(
-    processHandler,
-    address,
-    Buffer.concat(values.map(v => v.rawBuffer))
-  );
+  if (values instanceof TArray) {
+    return base.writeBuffer(processHandler, address, values.rawBuffer);
+  } else {
+    return base.writeBuffer(
+      processHandler,
+      address,
+      Buffer.concat(values.map(v => v.rawBuffer))
+    );
+  }
 }
 
 export default {
