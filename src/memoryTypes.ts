@@ -3,11 +3,15 @@ import { ResizeBuffer } from './util';
 export abstract class DataType<U extends number | bigint | string | boolean> {
   protected _buffer!: Buffer;
 
-  constructor(value?: any) {
+  constructor(value?: U | U[] | Uint8Array | Buffer) {
     if (Buffer.isBuffer(value)) {
       this._buffer = value;
     } else if (value instanceof Uint8Array) {
       this._buffer = Buffer.from(value);
+    } else if (Array.isArray(value)) {
+      if (value.length > 0) {
+        if (typeof value[0] === 'number') this._buffer = Buffer.from(value);
+      }
     }
   }
 
@@ -27,9 +31,18 @@ export abstract class DataType<U extends number | bigint | string | boolean> {
 export abstract class OneByte extends DataType<string | boolean | number> {
   constructor(value?: any) {
     super(value);
+
     if (!Buffer.isBuffer(value) && !(value instanceof Uint8Array))
+      // If value is not a buffer or Uint8Array
+      // Means that it is a value to be written
+      // So we allocate a buffer of 1 byte
+      // so that we can write the value to it later
       this._buffer = Buffer.alloc(1);
     else {
+      // If it is a buffer or Uint8Array
+      // Means that it is a value to be read
+      // So we resize the buffer to 1 byte so in case the buffer / Uint8Array is bigger or smaller
+      // than 1 byte, we can resize it to 1 byte
       this._buffer = ResizeBuffer(this._buffer, 1);
     }
   }
@@ -181,11 +194,21 @@ export class UInt32 extends FourBytes {
 }
 
 export class Int64 extends EightBytes {
-  constructor(value?: bigint | Uint8Array | Buffer) {
+  constructor(value?: number | bigint | Uint8Array | Buffer) {
     super(value);
+    if (typeof value === 'number') {
+      value = BigInt(value);
+    }
     if (typeof value === 'bigint') {
-      this._buffer = Buffer.alloc(8);
       this._buffer.writeBigInt64LE(value);
+    } else if (Array.isArray(value)) {
+      if (value.length > 0) {
+        if (typeof value[0] === 'bigint') {
+          for (let i = 0; i < value.length; i++) {
+            this._buffer.writeBigInt64LE(BigInt(value[i]), i * 8);
+          }
+        }
+      }
     }
   }
   override get value(): bigint {
@@ -194,11 +217,21 @@ export class Int64 extends EightBytes {
 }
 
 export class UInt64 extends EightBytes {
-  constructor(value?: bigint | Uint8Array | Buffer) {
+  constructor(value?: number | bigint | Uint8Array | Buffer) {
     super(value);
+    if (typeof value === 'number') {
+      value = BigInt(value);
+    }
     if (typeof value === 'bigint') {
-      this._buffer = Buffer.alloc(8);
       this._buffer.writeBigUInt64LE(value);
+    } else if (Array.isArray(value)) {
+      if (value.length > 0) {
+        if (typeof value[0] === 'bigint') {
+          for (let i = 0; i < value.length; i++) {
+            this._buffer.writeBigUint64LE(BigInt(value[i]), i * 8);
+          }
+        }
+      }
     }
   }
   override get value(): bigint {
@@ -210,7 +243,6 @@ export class Float extends FourBytes {
   constructor(value?: number | Uint8Array | Buffer) {
     super(value);
     if (typeof value === 'number') {
-      this._buffer = Buffer.alloc(4);
       this._buffer.writeFloatLE(value);
     }
   }
@@ -223,7 +255,6 @@ export class Double extends EightBytes {
   constructor(value?: number | Uint8Array | Buffer) {
     super(value);
     if (typeof value === 'number') {
-      this._buffer = Buffer.alloc(8);
       this._buffer.writeDoubleLE(value);
     }
   }
@@ -239,10 +270,17 @@ export class TArray<
   private _type: DataTypeConstructor<T>;
   private _length: number;
 
-  constructor(type: [DataTypeConstructor<T>, number], value: T[]) {
+  constructor(type: [DataTypeConstructor<T>, number], value: U[]) {
     super(value);
     [this._type, this._length] = type;
-    this._buffer = Buffer.concat(value.map(v => v.rawBuffer));
+    // If value is an array of DataType
+    // We concat the rawBuffer of each item in the array
+    // If value is an array of number | bigint | string | boolean
+    // We create a new instance of the type and concat the rawBuffer of each item in the array
+    const tmp = value.map(v =>
+      v instanceof this._type ? v.rawBuffer : new this._type(v).rawBuffer
+    );
+    this._buffer = Buffer.concat(tmp);
   }
 
   override get value(): U[] {

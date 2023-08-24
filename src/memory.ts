@@ -34,7 +34,7 @@ export function ReadArray<
 
   for (let i = 0; i < length; i++) {
     const itemBuffer = buffer.slice(i * bytesOfType, (i + 1) * bytesOfType);
-    retVal[i] = new itemType(Uint8Array.from(itemBuffer));
+    retVal[i] = new itemType(itemBuffer);
   }
 
   return new TArray(constructor, retVal);

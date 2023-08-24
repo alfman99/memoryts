@@ -1,0 +1,260 @@
+import { Read, ReadArray, Write, WriteArray } from '../src/memory';
+import {
+  Bool,
+  Double,
+  Int16,
+  Int32,
+  Int64,
+  Int8,
+  TArray,
+  UInt16,
+  UInt32,
+  UInt64,
+  UInt8,
+} from '../src/memoryTypes';
+import { FindModule } from '../src/module';
+import { OpenProcess } from '../src/process';
+
+// modify timeout to 10 minutes
+jest.setTimeout(600000);
+
+describe('read/write memory Notepad.exe', () => {
+  const HANDLER = OpenProcess('Notepad.exe');
+  const PROCESS_NAME = 'Notepad.exe';
+  const moduleInfo = FindModule(PROCESS_NAME, 'textinputframework.dll');
+  const offset = 0x133930;
+  const ADDRESS = moduleInfo.modBaseAddr + offset;
+
+  describe('Bool/Bool[]', () => {
+    test('Bool', () => {
+      const value = false;
+      Write(HANDLER, ADDRESS, new Bool(value));
+      expect(Read(Bool, HANDLER, ADDRESS).value).toEqual(value);
+    });
+
+    test('Bool[]', () => {
+      const value = [false, true, true, false, false, true];
+      WriteArray(HANDLER, ADDRESS, new TArray([Bool, value.length], value));
+      const readValue = ReadArray([Bool, value.length], HANDLER, ADDRESS).value;
+
+      expect(readValue).toEqual(value);
+    });
+  });
+
+  describe('Int8/Int8[]', () => {
+    test('Int8', () => {
+      const value = 127;
+      Write(HANDLER, ADDRESS, new Int8(value));
+      expect(Read(Int8, HANDLER, ADDRESS).value).toEqual(value);
+    });
+
+    test('Int8[]', () => {
+      const value = [-5, 23, 6, -84, 122, 6];
+      WriteArray(HANDLER, ADDRESS, new TArray([Int8, value.length], value));
+      const readValue = ReadArray([Int8, value.length], HANDLER, ADDRESS).value;
+
+      expect(readValue).toEqual(value);
+    });
+  });
+
+  describe('UInt8/UInt8[]', () => {
+    test('UInt8', () => {
+      const value = 255;
+      Write(HANDLER, ADDRESS, new UInt8(value));
+      expect(Read(UInt8, HANDLER, ADDRESS).value).toEqual(value);
+    });
+
+    test('UInt8[]', () => {
+      const value = [5, 23, 6, 8, 122, 6];
+      WriteArray(HANDLER, ADDRESS, new TArray([UInt8, value.length], value));
+      const readValue = ReadArray(
+        [UInt8, value.length],
+        HANDLER,
+        ADDRESS
+      ).value;
+
+      expect(readValue).toEqual(value);
+    });
+  });
+
+  describe('Int16/Int16[]', () => {
+    test('Int16', () => {
+      const value = 32767;
+      Write(HANDLER, ADDRESS, new Int16(value));
+      expect(Read(Int16, HANDLER, ADDRESS).value).toEqual(value);
+    });
+
+    test('Int16[]', () => {
+      const value = [16123, -1512, 12363, -11236, 6234, 6734];
+      WriteArray(HANDLER, ADDRESS, new TArray([Int16, value.length], value));
+      const readValue = ReadArray(
+        [Int16, value.length],
+        HANDLER,
+        ADDRESS
+      ).value;
+
+      expect(readValue).toEqual(value);
+    });
+  });
+
+  describe('UInt16/UInt16[]', () => {
+    test('UInt16', () => {
+      const value = 65535;
+      Write(HANDLER, ADDRESS, new UInt16(value));
+      expect(Read(UInt16, HANDLER, ADDRESS).value).toEqual(value);
+    });
+
+    test('UInt16[]', () => {
+      const value = [23946, 62372, 12363, 11236, 17612, 12346];
+      WriteArray(HANDLER, ADDRESS, new TArray([UInt16, value.length], value));
+      const readValue = ReadArray(
+        [UInt16, value.length],
+        HANDLER,
+        ADDRESS
+      ).value;
+
+      expect(readValue).toEqual(value);
+    });
+  });
+
+  describe('Int32/Int32[]', () => {
+    test('Int32', () => {
+      const value = 2_147_483_647;
+      Write(HANDLER, ADDRESS, new Int32(value));
+      expect(Read(Int32, HANDLER, ADDRESS).value).toEqual(value);
+    });
+
+    test('Int32[]', () => {
+      const value = [2394652, -6237252, 1236352, -1123652, 1761252, -1234662];
+      WriteArray(HANDLER, ADDRESS, new TArray([Int32, value.length], value));
+      const readValue = ReadArray(
+        [Int32, value.length],
+        HANDLER,
+        ADDRESS
+      ).value;
+
+      expect(readValue).toEqual(value);
+    });
+  });
+
+  describe('UInt32/UInt32[]', () => {
+    test('UInt32', () => {
+      const value = 4_294_967_295;
+      Write(HANDLER, ADDRESS, new UInt32(value));
+      expect(Read(UInt32, HANDLER, ADDRESS).value).toEqual(value);
+    });
+
+    test('UInt32[]', () => {
+      const value = [
+        2394652235, 237252235, 236352235, 1123652235, 1761252235, 1241234662,
+      ];
+      WriteArray(HANDLER, ADDRESS, new TArray([UInt32, value.length], value));
+      const readValue = ReadArray(
+        [UInt32, value.length],
+        HANDLER,
+        ADDRESS
+      ).value;
+
+      expect(readValue).toEqual(value);
+    });
+  });
+
+  describe('Int64/Int64[]', () => {
+    test('Int64', () => {
+      const value = 4_294_967_295n;
+      Write(HANDLER, ADDRESS, new Int64(value));
+      expect(Read(Int64, HANDLER, ADDRESS).value).toEqual(value);
+    });
+
+    test('Int64[]', () => {
+      const value = [
+        2394652235n,
+        237252235n,
+        236352235n,
+        1123652235n,
+        1761252235n,
+        1241234662n,
+      ];
+      WriteArray(HANDLER, ADDRESS, new TArray([Int64, value.length], value));
+      const readValue = ReadArray(
+        [Int64, value.length],
+        HANDLER,
+        ADDRESS
+      ).value;
+
+      expect(readValue).toEqual(value);
+    });
+  });
+
+  describe('UInt64/UInt64[]', () => {
+    test('UInt64', () => {
+      const value = 4_294_967_295n;
+      Write(HANDLER, ADDRESS, new UInt64(value));
+      expect(Read(UInt64, HANDLER, ADDRESS).value).toEqual(value);
+    });
+
+    test('UInt64[]', () => {
+      const value = [
+        18_446_744_073_709_551_615n,
+        237_252_235n,
+        236_352_235n,
+        1_123_652_235n,
+        1_761_252_235n,
+        1_241_234_662n,
+      ];
+      WriteArray(HANDLER, ADDRESS, new TArray([UInt64, value.length], value));
+      const readValue = ReadArray(
+        [UInt64, value.length],
+        HANDLER,
+        ADDRESS
+      ).value;
+
+      expect(readValue).toEqual(value);
+    });
+  });
+
+  //   describe('Float/Float[]', () => {
+  //     test('Float', () => {
+  //       const value = 234.23452345;
+  //       Write(HANDLER, ADDRESS, new Float(value));
+  //       expect(Read(Float, HANDLER, ADDRESS).value).toEqual(value);
+  //     });
+
+  //     test('Float[]', () => {
+  //       const value = [
+  //         2345.23453, 2345234.3245, 234.2345, 324523.23452, 2347345.3224,
+  //       ];
+  //       WriteArray(HANDLER, ADDRESS, new TArray([Float, value.length], value));
+  //       const readValue = ReadArray(
+  //         [Float, value.length],
+  //         HANDLER,
+  //         ADDRESS
+  //       ).value;
+
+  //       expect(readValue).toEqual(value);
+  //     });
+  //   });
+
+  describe('Double/Double[]', () => {
+    test('Double', () => {
+      const value = 481235.16847;
+      Write(HANDLER, ADDRESS, new Double(value));
+      expect(Read(Double, HANDLER, ADDRESS).value).toEqual(value);
+    });
+
+    test('Double[]', () => {
+      const value = [
+        481235.16847, 123454234.2343246, 13644.2332342, 2346781.16847,
+        2347231.16547, 234.25478,
+      ];
+      WriteArray(HANDLER, ADDRESS, new TArray([Double, value.length], value));
+      const readValue = ReadArray(
+        [Double, value.length],
+        HANDLER,
+        ADDRESS
+      ).value;
+
+      expect(readValue).toEqual(value);
+    });
+  });
+});
