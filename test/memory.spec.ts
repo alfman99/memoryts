@@ -196,12 +196,8 @@ describe('read/write memory Notepad.exe', () => {
   //       const value = [
   //         2345.23453, 2345234.3245, 234.2345, 324523.23452, 2347345.3224,
   //       ];
-  // new TArray(Float, value.length, value),       WriteArray(HANDLER, ADDRESS);
-  //       const readValue = ReadArray(
-  //         Float, value.length,
-  //         HANDLER,
-  //         ADDRESS
-  //       ).value;
+  //       WriteArray(new TArray(Float, value.length, value), HANDLER, ADDRESS);
+  //       const readValue = ReadArray(Float, value.length, HANDLER, ADDRESS).value;
 
   //       expect(readValue).toEqual(value);
   //     });
