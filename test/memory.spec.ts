@@ -222,3 +222,46 @@ describe('read/write memory Notepad.exe', () => {
     });
   });
 });
+
+describe('initialize value outside of range', () => {
+  test('Int8', () => {
+    const value = 128;
+    expect(() => new Int8(value)).toThrowError();
+  });
+  test('UInt8', () => {
+    const value = -1;
+    expect(() => new UInt8(value)).toThrowError();
+  });
+  test('Int16', () => {
+    const value = 32768;
+    expect(() => new Int16(value)).toThrowError();
+  });
+  test('UInt16', () => {
+    const value = -1;
+    expect(() => new UInt16(value)).toThrowError();
+  });
+  test('Int32', () => {
+    const value = 2_147_483_648;
+    expect(() => new Int32(value)).toThrowError();
+  });
+  test('UInt32', () => {
+    const value = -1;
+    expect(() => new UInt32(value)).toThrowError();
+  });
+  test('Int64', () => {
+    const value = 9_223_372_036_854_775_808n;
+    expect(() => new Int64(value)).toThrowError();
+  });
+  test('UInt64', () => {
+    const value = -1n;
+    expect(() => new UInt64(value)).toThrowError();
+  });
+  test('Float', () => {
+    const value = Number.MAX_VALUE;
+    expect(() => new Double(value)).toThrowError();
+  });
+  test('Double', () => {
+    const value = Number.MAX_VALUE;
+    expect(() => new Double(value)).toThrowError();
+  });
+});
