@@ -25,7 +25,7 @@ export abstract class DataType<U extends number | bigint | string | boolean> {
   }
 
   // Representation of the bytes in human readable format
-  abstract get value(): U | U[];
+  abstract get value(): U | U[] | { [key: string]: U | U[] };
 }
 
 export abstract class OneByte extends DataType<string | boolean | number> {
@@ -296,6 +296,47 @@ export class TArray<
     return retVal;
   }
 }
+
+// export class TStruct<
+//   T extends { [key: string]: DataType<U> },
+//   U extends number | bigint | string | boolean
+// > extends DataType<U> {
+//   private _type: { [key: string]: DataTypeConstructor<DataType<U>> };
+
+//   constructor(
+//     type: { [key: string]: DataTypeConstructor<DataType<U>> },
+//     value: T
+//   ) {
+//     super();
+//     this._type = type;
+//     const tmp: Buffer[] = [];
+//     for (const key in value) {
+//       if (type[key] !== TStruct) {
+//         tmp.push(new type[key](value[key]).rawBuffer);
+//       } else {
+//         console.error('[Constructor] Nested TStruct not supported yet');
+//       }
+//     }
+//     this._buffer = Buffer.concat(tmp);
+//   }
+
+//   override get value(): { [key: string]: U | U[] } {
+//     const retVal: { [key: string]: U | U[] } = {};
+//     let offset = 0;
+//     for (const key in this._type) {
+//       const itemBuffer = this._buffer.slice(
+//         offset,
+//         offset + new this._type[key]().rawBuffer.length
+//       );
+//       retVal[key] = new this._type[key](Uint8Array.from(itemBuffer)).value as
+//         | U
+//         | U[];
+
+//       offset += new this._type[key]().rawBuffer.length;
+//     }
+//     return retVal;
+//   }
+// }
 
 export type DataTypeConstructor<
   T extends DataType<number | bigint | string | boolean>
