@@ -101,23 +101,13 @@ export class Int8 extends OneByte {
   constructor(value?: number | Uint8Array | Buffer) {
     super(value);
     if (typeof value === 'number') {
+      if (value < -(2 ** 7) || value > 2 ** 7 - 1)
+        throw new Error('Value out of range');
       this._buffer.writeInt8(value);
     }
   }
   override get value(): number {
     return this._buffer.readInt8();
-  }
-}
-
-export class Byte extends OneByte {
-  constructor(value?: number | Uint8Array | Buffer) {
-    super(value);
-    if (typeof value === 'number') {
-      this._buffer.writeUInt8(value);
-    }
-  }
-  override get value(): number {
-    return this._buffer.readUInt8();
   }
 }
 
@@ -137,6 +127,8 @@ export class UInt8 extends OneByte {
   constructor(value?: number | Uint8Array | Buffer) {
     super(value);
     if (typeof value === 'number') {
+      if (value < 0 || value > 2 ** 8 - 1)
+        throw new Error('Value out of range');
       this._buffer.writeUInt8(value);
     }
   }
@@ -145,10 +137,15 @@ export class UInt8 extends OneByte {
   }
 }
 
+// Byte is an alias of UInt8
+export class Byte extends UInt8 {}
+
 export class Int16 extends TwoBytes {
   constructor(value?: number | Uint8Array | Buffer) {
     super(value);
     if (typeof value === 'number') {
+      if (value < -(2 ** 15) || value > 2 ** 15 - 1)
+        throw new Error('Value out of range');
       this._buffer.writeInt16LE(value);
     }
   }
@@ -161,6 +158,8 @@ export class UInt16 extends TwoBytes {
   constructor(value?: number | Uint8Array | Buffer) {
     super(value);
     if (typeof value === 'number') {
+      if (value < 0 || value > 2 ** 16 - 1)
+        throw new Error('Value out of range');
       this._buffer.writeUInt16LE(value);
     }
   }
@@ -173,6 +172,8 @@ export class Int32 extends FourBytes {
   constructor(value?: number | Uint8Array | Buffer) {
     super(value);
     if (typeof value === 'number') {
+      if (value < -(2 ** 31) || value > 2 ** 31 - 1)
+        throw new Error('Value out of range');
       this._buffer.writeInt32LE(value);
     }
   }
@@ -185,6 +186,8 @@ export class UInt32 extends FourBytes {
   constructor(value?: number | Uint8Array | Buffer) {
     super(value);
     if (typeof value === 'number') {
+      if (value < 0 || value > 2 ** 32 - 1)
+        throw new Error('Value out of range');
       this._buffer.writeUInt32LE(value);
     }
   }
@@ -196,11 +199,15 @@ export class UInt32 extends FourBytes {
 export class Int64 extends EightBytes {
   constructor(value?: number | bigint | Uint8Array | Buffer) {
     super(value);
-    if (typeof value === 'number') {
-      value = BigInt(value);
-    }
-    if (typeof value === 'bigint') {
-      this._buffer.writeBigInt64LE(value);
+    if (typeof value === 'number' || typeof value === 'bigint') {
+      if (value < -(2n ** 63n) || value > 2n ** 63n - 1n)
+        throw new Error('Value out of range');
+      if (typeof value === 'number') {
+        value = BigInt(value);
+      }
+      if (typeof value === 'bigint') {
+        this._buffer.writeBigInt64LE(value);
+      }
     } else if (Array.isArray(value)) {
       if (value.length > 0) {
         if (typeof value[0] === 'bigint') {
@@ -219,11 +226,15 @@ export class Int64 extends EightBytes {
 export class UInt64 extends EightBytes {
   constructor(value?: number | bigint | Uint8Array | Buffer) {
     super(value);
-    if (typeof value === 'number') {
-      value = BigInt(value);
-    }
-    if (typeof value === 'bigint') {
-      this._buffer.writeBigUInt64LE(value);
+    if (typeof value === 'number' || typeof value === 'bigint') {
+      if (value < 0 || value > 2n ** 64n - 1n)
+        throw new Error('Value out of range');
+      if (typeof value === 'number') {
+        value = BigInt(value);
+      }
+      if (typeof value === 'bigint') {
+        this._buffer.writeBigUInt64LE(value);
+      }
     } else if (Array.isArray(value)) {
       if (value.length > 0) {
         if (typeof value[0] === 'bigint') {
@@ -243,6 +254,8 @@ export class Float extends FourBytes {
   constructor(value?: number | Uint8Array | Buffer) {
     super(value);
     if (typeof value === 'number') {
+      if (value < -(2 ** 31) || value > 2 ** 31 - 1)
+        throw new Error('Value out of range');
       this._buffer.writeFloatLE(value);
     }
   }
@@ -255,6 +268,8 @@ export class Double extends EightBytes {
   constructor(value?: number | Uint8Array | Buffer) {
     super(value);
     if (typeof value === 'number') {
+      if (value < -(2 ** 31) || value > 2 ** 31 - 1)
+        throw new Error('Value out of range');
       this._buffer.writeDoubleLE(value);
     }
   }
