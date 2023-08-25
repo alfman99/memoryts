@@ -21,29 +21,29 @@ export function ReadArray<
   T extends DataType<U>,
   U extends string | number | bigint | boolean
 >(
-  constructor: [DataTypeConstructor<T>, number],
+  constructor: DataTypeConstructor<T>,
+  length: number,
   processHandler: Handle,
   address: MemoryAddress
 ): TArray<T, U> {
-  const [itemType, length] = constructor;
   const retVal = new Array(length);
-  const bytesOfType = new itemType().rawBuffer.length;
+  const bytesOfType = new constructor().rawBuffer.length;
   const bytesToRead = bytesOfType * length;
 
   const buffer = base.readBuffer(processHandler, address, bytesToRead);
 
   for (let i = 0; i < length; i++) {
     const itemBuffer = buffer.slice(i * bytesOfType, (i + 1) * bytesOfType);
-    retVal[i] = new itemType(itemBuffer);
+    retVal[i] = new constructor(itemBuffer);
   }
 
-  return new TArray(constructor, retVal);
+  return new TArray(constructor, length, retVal);
 }
 
 export function Write<
   T extends DataType<U>,
   U extends string | number | bigint | boolean
->(processHandler: Handle, address: MemoryAddress, value: T): void {
+>(value: T, processHandler: Handle, address: MemoryAddress): void {
   return base.writeBuffer(processHandler, address, value.rawBuffer);
 }
 
@@ -51,9 +51,9 @@ export function WriteArray<
   T extends DataType<U>,
   U extends string | number | bigint | boolean
 >(
+  values: T[] | TArray<T, U>,
   processHandler: Handle,
-  address: MemoryAddress,
-  values: T[] | TArray<T, U>
+  address: MemoryAddress
 ): void {
   if (values instanceof TArray) {
     return base.writeBuffer(processHandler, address, values.rawBuffer);

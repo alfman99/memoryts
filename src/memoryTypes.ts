@@ -270,9 +270,10 @@ export class TArray<
   private _type: DataTypeConstructor<T>;
   private _length: number;
 
-  constructor(type: [DataTypeConstructor<T>, number], value: U[]) {
+  constructor(type: DataTypeConstructor<T>, length: number, value: U[]) {
     super(value);
-    [this._type, this._length] = type;
+    this._type = type;
+    this._length = length;
     // If value is an array of DataType
     // We concat the rawBuffer of each item in the array
     // If value is an array of number | bigint | string | boolean
