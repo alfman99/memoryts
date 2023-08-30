@@ -1,7 +1,7 @@
 import base from '../../base-memoryts';
 
 export function PatternScanning(
-  processHandler: Handle,
+  processHandler: ProcessHandle,
   pattern: string,
   from_addr: MemoryAddress,
   to_addr: MemoryAddress
