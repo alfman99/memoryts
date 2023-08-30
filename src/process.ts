@@ -1,6 +1,6 @@
 import base from '../../base-memoryts';
 
-export function OpenProcess(process: string | number): Handle {
+export function OpenProcess(process: string | number): ProcessHandle {
   if (typeof process === 'string') {
     return base.openProcessName(process);
   } else if (typeof process === 'number') {
@@ -17,7 +17,7 @@ export function GetProcessesRunning(): ProcessInfo[] {
   }));
 }
 
-export function CloseProcess(process: Handle): void {
+export function CloseProcess(process: ProcessHandle): void {
   base.closeProcess(process);
 }
 

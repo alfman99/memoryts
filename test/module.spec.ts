@@ -1,5 +1,3 @@
-// TODO: create tests
-
 import { GetModuleHandle, GetModuleInfo, ListModules } from '../src/module';
 import { OpenProcess } from '../src/process';
 

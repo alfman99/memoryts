@@ -6,7 +6,7 @@ export function Read<
   U extends string | number | bigint | boolean
 >(
   constructor: DataTypeConstructor<T>,
-  processHandler: Handle,
+  processHandler: ProcessHandle,
   address: MemoryAddress
 ): T {
   const itemType = constructor;
@@ -23,7 +23,7 @@ export function ReadArray<
 >(
   constructor: DataTypeConstructor<T>,
   length: number,
-  processHandler: Handle,
+  processHandler: ProcessHandle,
   address: MemoryAddress
 ): TArray<T, U> {
   const retVal = new Array(length);
@@ -43,7 +43,7 @@ export function ReadArray<
 export function Write<
   T extends DataType<U>,
   U extends string | number | bigint | boolean
->(value: T, processHandler: Handle, address: MemoryAddress): void {
+>(value: T, processHandler: ProcessHandle, address: MemoryAddress): void {
   return base.writeBuffer(processHandler, address, value.rawBuffer);
 }
 
@@ -52,7 +52,7 @@ export function WriteArray<
   U extends string | number | bigint | boolean
 >(
   values: T[] | TArray<T, U>,
-  processHandler: Handle,
+  processHandler: ProcessHandle,
   address: MemoryAddress
 ): void {
   if (values instanceof TArray) {

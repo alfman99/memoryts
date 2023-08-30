@@ -26,7 +26,7 @@ export function GetModuleHandle(
 }
 
 export function GetModuleInfo(
-  process_handle: Handle,
+  process_handle: ProcessHandle,
   module_handle: ModuleHandle
 ): JSLPMODULEINFO {
   return getModuleInformation(process_handle, module_handle);

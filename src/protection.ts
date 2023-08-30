@@ -2,7 +2,7 @@ import base from '../../base-memoryts';
 import { ProtectionLevel } from './protectionLevels';
 
 export function SetProtectionLevel(
-  process_handler: base.ExternalObject<Handle>,
+  process_handler: base.ExternalObject<ProcessHandle>,
   address: MemoryAddress,
   size: number,
   protection: ProtectionLevel
