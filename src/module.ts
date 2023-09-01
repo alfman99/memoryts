@@ -7,53 +7,28 @@ import {
   listProcessModules,
   processHandleToName,
   processHandleToPid,
-  processNameToPid,
   processPidToName,
 } from '../../base-memoryts';
 
 export function FindModule(
-  process: string | number | ProcessHandle,
+  process: ProcessHandle,
   module_name: string
 ): JSMODULEENTRY32 {
-  if (typeof process === 'object') {
-    process = processHandleToName(process);
-  } else if (typeof process === 'number') {
-    process = processPidToName(process);
-  }
-
+  process = processHandleToName(process);
   return getProcessModuleEntry32(process, module_name);
 }
 
-export function ListModules(
-  process: number | string | ProcessHandle
-): Array<JSMODULEENTRY32> {
-  // If process is a ProcessHandle, convert it to a pid
-  if (typeof process === 'object') {
-    process = processHandleToPid(process);
-  } else if (typeof process === 'string') {
-    // If process is a string, convert it to its pid
-    process = processNameToPid(process);
-  }
-
+export function ListModules(process: ProcessHandle): Array<JSMODULEENTRY32> {
+  process = processHandleToPid(process);
   return listProcessModules(process);
 }
 
 export function GetModuleHandle(
-  process: string | number | ProcessHandle,
+  process: ProcessHandle,
   module_name: string
 ): ModuleHandle {
-  // If process is a ProcessHandle, convert it to a pid
-  if (typeof process !== 'number' && typeof process !== 'string') {
-    process = processHandleToPid(process);
-  }
-
-  // If process is a string, do nothing
-  if (typeof process === 'string') {
-    // Do nothing
-  } else if (typeof process === 'number') {
-    // If process is a number, convert it to its process name
-    process = processPidToName(process);
-  }
+  process = processHandleToPid(process);
+  process = processPidToName(process);
 
   return getModuleHandle(process, module_name);
 }
