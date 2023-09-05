@@ -53,8 +53,9 @@ MemoryTS is a powerful TypeScript package designed to provide developers with a 
 
 ## Compatibility
 - [x] Windows
-  - [ ] x86
-  - [x] x64
+  - [ ] Host process x86 targeting x86
+  - [ ] Host process x64 targeting x86
+  - [x] Host process x64 targeting x64
 
 
 For more detailed information, check out the [API documentation](API.md).
