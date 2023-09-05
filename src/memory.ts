@@ -1,4 +1,4 @@
-import base from '../../base-memoryts';
+import base from '@memoryts/base';
 import { DataType, DataTypeConstructor, TArray } from './memoryTypes';
 
 export function Read<

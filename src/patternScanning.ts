@@ -1,4 +1,4 @@
-import base from '../../base-memoryts';
+import base from '@memoryts/base';
 
 export function PatternScanning(
   process: ProcessHandle,

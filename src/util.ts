@@ -1,4 +1,4 @@
-import base from '../../base-memoryts';
+import base from '@memoryts/base';
 
 export function Architecture(): 'x64' | 'x32' {
   return base.is64BitProcess() ? 'x64' : 'x32';

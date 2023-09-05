@@ -8,7 +8,7 @@ import {
   processHandleToName,
   processHandleToPid,
   processPidToName,
-} from '../../base-memoryts';
+} from '@memoryts/base';
 
 export function FindModule(
   process: ProcessHandle,
