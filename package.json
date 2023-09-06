@@ -6,6 +6,10 @@
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alfman99/memoryts.git"
+  },
   "engines": {
     "node": ">=10"
   },
