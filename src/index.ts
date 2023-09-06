@@ -4,7 +4,6 @@ import module from './module';
 import patternScanning from './patternScanning';
 import process from './process';
 import protection from './protection';
-import types from './typings';
 import util from './util';
 
 export default {
@@ -13,9 +12,8 @@ export default {
   ...process,
   ...protection,
   ...util,
+  ...patternScanning,
   types: {
     ...memoryTypes,
   },
-  ...patternScanning,
-  ...types,
 };

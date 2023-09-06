@@ -14,7 +14,10 @@ export function FindModule(
   process: MemoryTS.ProcessHandle,
   module_name: string
 ): MemoryTS.ModuleEntry32 {
-  const processName = processHandleToName(process);
+  const processPath = processHandleToName(process);
+
+  const processName = processPath.split('\\').pop() || '';
+
   const entry = getProcessModuleEntry32(processName, module_name);
   return {
     dwSize: entry.dwSize,

@@ -1,4 +1,9 @@
-import { GetModuleHandle, GetModuleInfo, ListModules } from '../src/module';
+import {
+  FindModule,
+  GetModuleHandle,
+  GetModuleInfo,
+  ListModules,
+} from '../src/module';
 import { OpenProcess } from '../src/process';
 
 // modify timeout to 10 minutes
@@ -16,8 +21,8 @@ describe('module information', () => {
 
   test('Get module handle with invalid module name', () => {
     expect(() => {
-        const pHandle = OpenProcess(PROCESS_NAME);
-        GetModuleHandle(pHandle, 'invalid.dll')
+      const pHandle = OpenProcess(PROCESS_NAME);
+      GetModuleHandle(pHandle, 'invalid.dll');
     }).toThrow();
   });
 
@@ -53,4 +58,10 @@ describe('module information', () => {
     expect(info).not.toBeUndefined();
   });
 
+  test('find module', () => {
+    const pHandle = OpenProcess(PROCESS_NAME);
+    const moduleHandle = FindModule(pHandle, PROCESS_NAME);
+
+    expect(moduleHandle).not.toBeUndefined();
+  });
 });

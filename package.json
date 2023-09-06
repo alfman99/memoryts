@@ -1,5 +1,5 @@
 {
-  "version": "2.0.3",
+  "version": "2.0.14",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -51,6 +51,6 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@memoryts/base": "^1.0.11"
+    "@memoryts/base": "^1.0.14"
   }
 }

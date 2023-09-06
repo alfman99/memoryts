@@ -60,6 +60,36 @@ MemoryTS is a powerful TypeScript package designed to provide developers with a 
 
 For more detailed information, check out the [API documentation](API.md).
 
+## Examples
+### Read single `char` Notepad.exe
+```ts
+import mem from 'memoryts';
+
+// Open handle to process
+const pHandle = mem.OpenProcess('Notepad.exe')
+
+// Read 20 bytes from memory at address 0x7FFC885D3A30
+const readData = mem.Read(mem.types.Char, pHandle, 0x7FFC885D3A30)
+
+// Print data
+console.log(readData.value)
+```
+### Read 20 `char` array from Notepad.exe and transform into UTF-16 encoded String
+```ts
+import mem from 'memoryts';
+
+// Open handle to process
+const pHandle = mem.OpenProcess('Notepad.exe')
+
+// Read 20 bytes from memory at address 0x7FFC885D3A30
+const readData = mem.ReadArray(mem.types.Char, 20, pHandle, 0x7FFC885D3A30)
+
+// Transform raw buffer into string using UTF-16 encoding
+const data = new TextDecoder('utf-16').decode(readData.rawBuffer)
+
+// Print data
+console.log(data)
+```
 
 ## License
 

@@ -1277,23 +1277,17 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@memoryts/base-win32-ia32-msvc@1.0.11":
-  version "1.0.11"
-  resolved "https://registry.yarnpkg.com/@memoryts/base-win32-ia32-msvc/-/base-win32-ia32-msvc-1.0.11.tgz#47b858fafa03027b84776f25b06723550e680d40"
-  integrity sha512-9XpkzvdVMWsYSszkXpc9zpjmfnyjmXjmpGfNXA4Us96uCuZjvr6fCvF3qxfEUZWpPJrQgPY0RUSnQrveb1rWJw==
+"@memoryts/base-win32-x64-msvc@1.0.14":
+  version "1.0.14"
+  resolved "https://registry.npmjs.org/@memoryts/base-win32-x64-msvc/-/base-win32-x64-msvc-1.0.14.tgz"
+  integrity sha512-swUmStE56MvSkjMis7a3teRm5q90kloRdbnSvLEpO0jEm1FUG70BnEBZFMvjfhbegBidoX2OXu1EAoLHcoRbgQ==
 
-"@memoryts/base-win32-x64-msvc@1.0.11":
-  version "1.0.11"
-  resolved "https://registry.yarnpkg.com/@memoryts/base-win32-x64-msvc/-/base-win32-x64-msvc-1.0.11.tgz#b2475e00f1dfa0a4ed28674f0c8b64e1d739b1b3"
-  integrity sha512-jaxhCN6196dYfuT7lFPBVJNRxN+kdu++1r/MqLCJtRwod9oe61J2W9lkAUTg7nNjIwJy+4KScgS6CH9Aq9nuEw==
-
-"@memoryts/base@^1.0.11":
-  version "1.0.11"
-  resolved "https://registry.yarnpkg.com/@memoryts/base/-/base-1.0.11.tgz#0b545e5a9218f661c8435ed29ca35fb8c4eb1c63"
-  integrity sha512-LKtq4vMFvgKXFVBkdTuLitKhjvIrTpLNnxO+LGxcZQvA8zYougd/pFf7YxY2Ne/JZvCup7eWkCl92bp9ev+0jg==
+"@memoryts/base@^1.0.14":
+  version "1.0.14"
+  resolved "https://registry.npmjs.org/@memoryts/base/-/base-1.0.14.tgz"
+  integrity sha512-LTNtuyFKucSHAnEl2I4cMRlAyFQ4NekCTQimabg/+mrCOzfLSKI5yzX76DhWNFywnbksYAyiMBgPxNPPCcRHsw==
   optionalDependencies:
-    "@memoryts/base-win32-ia32-msvc" "1.0.11"
-    "@memoryts/base-win32-x64-msvc" "1.0.11"
+    "@memoryts/base-win32-x64-msvc" "1.0.14"
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
