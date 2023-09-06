@@ -9,9 +9,9 @@ export abstract class DataType<U extends number | bigint | string | boolean> {
     } else if (value instanceof Uint8Array) {
       this._buffer = Buffer.from(value);
     } else if (Array.isArray(value)) {
-      if (value.length > 0) {
-        if (typeof value[0] === 'number') this._buffer = Buffer.from(value);
-      }
+        // If value is array do nothing
+        // it will be handled by the child class
+        // TArray, because size of array is dynamic
     }
   }
 
@@ -29,7 +29,7 @@ export abstract class DataType<U extends number | bigint | string | boolean> {
 }
 
 export abstract class OneByte extends DataType<string | boolean | number> {
-  constructor(value?: any) {
+  constructor(value?: string | boolean | number | Uint8Array | Buffer) {
     super(value);
 
     if (!Buffer.isBuffer(value) && !(value instanceof Uint8Array))
@@ -50,7 +50,7 @@ export abstract class OneByte extends DataType<string | boolean | number> {
 }
 
 export abstract class TwoBytes extends DataType<number> {
-  constructor(value?: any) {
+  constructor(value?: number | Uint8Array | Buffer) {
     super(value);
     if (!Buffer.isBuffer(value) && !(value instanceof Uint8Array))
       this._buffer = Buffer.alloc(2);
@@ -62,7 +62,7 @@ export abstract class TwoBytes extends DataType<number> {
 }
 
 export abstract class FourBytes extends DataType<number> {
-  constructor(value?: any) {
+  constructor(value?: number | Uint8Array | Buffer) {
     super(value);
     if (!Buffer.isBuffer(value) && !(value instanceof Uint8Array))
       this._buffer = Buffer.alloc(4);
@@ -74,7 +74,7 @@ export abstract class FourBytes extends DataType<number> {
 }
 
 export abstract class EightBytes extends DataType<number | bigint> {
-  constructor(value?: any) {
+  constructor(value?: number | bigint | Uint8Array | Buffer) {
     super(value);
     if (!Buffer.isBuffer(value) && !(value instanceof Uint8Array))
       this._buffer = Buffer.alloc(8);
@@ -92,9 +92,9 @@ export class Bool extends OneByte {
       this._buffer.writeUInt8(value ? 1 : 0);
     }
   }
-  override get value(): boolean {
+  get value(): boolean {
     return this._buffer[0] & 1 ? true : false;
-  }
+  };
 }
 
 export class Int8 extends OneByte {
@@ -106,7 +106,7 @@ export class Int8 extends OneByte {
       this._buffer.writeInt8(value);
     }
   }
-  override get value(): number {
+  get value(): number {
     return this._buffer.readInt8();
   }
 }
@@ -118,7 +118,7 @@ export class Char extends OneByte {
       this._buffer.write(value[0]);
     }
   }
-  override get value(): string {
+  get value(): string {
     return this._buffer.toString();
   }
 }
@@ -132,7 +132,7 @@ export class UInt8 extends OneByte {
       this._buffer.writeUInt8(value);
     }
   }
-  override get value(): number {
+  get value(): number {
     return this._buffer.readUInt8();
   }
 }
@@ -149,7 +149,7 @@ export class Int16 extends TwoBytes {
       this._buffer.writeInt16LE(value);
     }
   }
-  override get value(): number {
+  get value(): number {
     return this._buffer.readInt16LE();
   }
 }
@@ -163,7 +163,7 @@ export class UInt16 extends TwoBytes {
       this._buffer.writeUInt16LE(value);
     }
   }
-  override get value(): number {
+  get value(): number {
     return this._buffer.readUInt16LE();
   }
 }
@@ -177,7 +177,7 @@ export class Int32 extends FourBytes {
       this._buffer.writeInt32LE(value);
     }
   }
-  override get value(): number {
+  get value(): number {
     return this._buffer.readInt32LE();
   }
 }
@@ -191,7 +191,7 @@ export class UInt32 extends FourBytes {
       this._buffer.writeUInt32LE(value);
     }
   }
-  override get value(): number {
+  get value(): number {
     return this._buffer.readUInt32LE();
   }
 }
@@ -218,7 +218,7 @@ export class Int64 extends EightBytes {
       }
     }
   }
-  override get value(): bigint {
+  get value(): bigint {
     return this._buffer.readBigInt64LE();
   }
 }
@@ -245,7 +245,7 @@ export class UInt64 extends EightBytes {
       }
     }
   }
-  override get value(): bigint {
+  get value(): bigint {
     return this._buffer.readBigUInt64LE();
   }
 }
@@ -259,7 +259,7 @@ export class Float extends FourBytes {
       this._buffer.writeFloatLE(value);
     }
   }
-  override get value(): number {
+  get value(): number {
     return this._buffer.readFloatLE();
   }
 }
@@ -273,7 +273,7 @@ export class Double extends EightBytes {
       this._buffer.writeDoubleLE(value);
     }
   }
-  override get value(): number {
+  get value(): number {
     return this._buffer.readDoubleLE();
   }
 }
@@ -299,7 +299,7 @@ export class TArray<
     this._buffer = Buffer.concat(tmp);
   }
 
-  override get value(): U[] {
+  get value(): U[] {
     const retVal: U[] = [];
     for (let i = 0; i < this._length; i++) {
       const itemBuffer = this._buffer.slice(
@@ -335,7 +335,7 @@ export class TArray<
 //     this._buffer = Buffer.concat(tmp);
 //   }
 
-//   override get value(): { [key: string]: U | U[] } {
+//   get value(): { [key: string]: U | U[] } {
 //     const retVal: { [key: string]: U | U[] } = {};
 //     let offset = 0;
 //     for (const key in this._type) {

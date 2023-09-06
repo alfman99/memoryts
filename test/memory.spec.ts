@@ -19,9 +19,9 @@ import { OpenProcess } from '../src/process';
 jest.setTimeout(600000);
 
 describe('read/write memory Notepad.exe', () => {
-  const HANDLER = OpenProcess('Notepad.exe');
   const PROCESS_NAME = 'Notepad.exe';
-  const moduleInfo = FindModule(PROCESS_NAME, 'textinputframework.dll');
+  const HANDLER = OpenProcess(PROCESS_NAME);
+  const moduleInfo = FindModule(HANDLER, 'textinputframework.dll');
   const offset = 0x133930;
   const ADDRESS = moduleInfo.modBaseAddr + offset;
 
@@ -130,7 +130,12 @@ describe('read/write memory Notepad.exe', () => {
 
     test('UInt32[]', () => {
       const value = [
-        2394652235, 237252235, 236352235, 1123652235, 1761252235, 1241234662,
+        2394652235,
+        237252235,
+        236352235,
+        1123652235,
+        1761252235,
+        1241234662,
       ];
       WriteArray(new TArray(UInt32, value.length, value), HANDLER, ADDRESS);
       const readValue = ReadArray(UInt32, value.length, HANDLER, ADDRESS).value;
@@ -212,8 +217,12 @@ describe('read/write memory Notepad.exe', () => {
 
     test('Double[]', () => {
       const value = [
-        481235.16847, 123454234.2343246, 13644.2332342, 2346781.16847,
-        2347231.16547, 234.25478,
+        481235.16847,
+        123454234.2343246,
+        13644.2332342,
+        2346781.16847,
+        2347231.16547,
+        234.25478,
       ];
       WriteArray(new TArray(Double, value.length, value), HANDLER, ADDRESS);
       const readValue = ReadArray(Double, value.length, HANDLER, ADDRESS).value;

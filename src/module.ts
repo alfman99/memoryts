@@ -1,5 +1,4 @@
 import {
-  JSMODULEENTRY32,
   Jslpmoduleinfo,
   getModuleHandle,
   getModuleInformation,
@@ -9,33 +8,58 @@ import {
   processHandleToPid,
   processPidToName,
 } from '@memoryts/base';
+import { MemoryTS } from './typings';
 
 export function FindModule(
-  process: ProcessHandle,
+  process: MemoryTS.ProcessHandle,
   module_name: string
-): JSMODULEENTRY32 {
-  process = processHandleToName(process);
-  return getProcessModuleEntry32(process, module_name);
+): MemoryTS.ModuleEntry32 {
+  const processName = processHandleToName(process);
+  const entry = getProcessModuleEntry32(processName, module_name);
+  return {
+    dwSize: entry.dwSize,
+    th32ModuleId: entry.th32ModuleId,
+    th32ProcessId: entry.th32ProcessId,
+    glblcntUsage: entry.glblcntUsage,
+    proccntUsage: entry.proccntUsage,
+    modBaseAddr: entry.modBaseAddr,
+    modBaseSize: entry.modBaseSize,
+    szModule: entry.szModule,
+    szExePath: entry.szExePath,
+  };
 }
 
-export function ListModules(process: ProcessHandle): Array<JSMODULEENTRY32> {
-  process = processHandleToPid(process);
-  return listProcessModules(process);
+export function ListModules(
+  process: MemoryTS.ProcessHandle
+): Array<MemoryTS.ModuleEntry32> {
+  const processPid = processHandleToPid(process);
+  const entries = listProcessModules(processPid);
+  return entries.map(entry => ({
+    dwSize: entry.dwSize,
+    th32ModuleId: entry.th32ModuleId,
+    th32ProcessId: entry.th32ProcessId,
+    glblcntUsage: entry.glblcntUsage,
+    proccntUsage: entry.proccntUsage,
+    modBaseAddr: entry.modBaseAddr,
+    modBaseSize: entry.modBaseSize,
+    szModule: entry.szModule,
+    szExePath: entry.szExePath,
+  }));
 }
 
 export function GetModuleHandle(
-  process: ProcessHandle,
+  process: MemoryTS.ProcessHandle,
   module_name: string
-): ModuleHandle {
-  process = processHandleToPid(process);
-  process = processPidToName(process);
+): MemoryTS.ModuleHandle {
+  const processPid = processHandleToPid(process);
+  const processName = processPidToName(processPid);
 
-  return getModuleHandle(process, module_name);
+  return getModuleHandle(processName, module_name);
 }
 
 export function GetModuleInfo(
-  process_handle: ProcessHandle,
-  module_handle: ModuleHandle
+  process_handle: MemoryTS.ProcessHandle,
+  module_handle: MemoryTS.ModuleHandle
 ): Jslpmoduleinfo {
   return getModuleInformation(process_handle, module_handle);
 }

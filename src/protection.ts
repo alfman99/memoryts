@@ -1,12 +1,12 @@
 import base from '@memoryts/base';
-import { ProtectionLevel } from './protectionLevels';
+import { MemoryTS } from './typings';
 
 export function SetProtectionLevel(
-  process: ProcessHandle,
-  address: MemoryAddress,
+  process: MemoryTS.ProcessHandle,
+  address: MemoryTS.MemoryAddress,
   size: number,
-  protection: ProtectionLevel
-): ProtectionLevel {
+  protection: MemoryTS.ProtectionLevel
+): MemoryTS.ProtectionLevel {
   return base.setProtection(process, address, size, protection);
 }
 
