@@ -40,3 +40,5 @@ export declare namespace MemoryTS {
     szExePath: string;
   }
 }
+
+export default MemoryTS;

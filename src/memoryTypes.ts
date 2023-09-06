@@ -1,6 +1,6 @@
 import { ResizeBuffer } from './util';
 
-abstract class DataType<U extends number | bigint | string | boolean> {
+export abstract class DataType<U extends number | bigint | string | boolean> {
   protected _buffer!: Buffer;
 
   constructor(value?: U | U[] | Uint8Array | Buffer) {
