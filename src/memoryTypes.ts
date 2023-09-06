@@ -1,6 +1,6 @@
 import { ResizeBuffer } from './util';
 
-export abstract class DataType<U extends number | bigint | string | boolean> {
+abstract class DataType<U extends number | bigint | string | boolean> {
   protected _buffer!: Buffer;
 
   constructor(value?: U | U[] | Uint8Array | Buffer) {
@@ -9,9 +9,9 @@ export abstract class DataType<U extends number | bigint | string | boolean> {
     } else if (value instanceof Uint8Array) {
       this._buffer = Buffer.from(value);
     } else if (Array.isArray(value)) {
-        // If value is array do nothing
-        // it will be handled by the child class
-        // TArray, because size of array is dynamic
+      // If value is array do nothing
+      // it will be handled by the child class
+      // TArray, because size of array is dynamic
     }
   }
 
@@ -28,7 +28,7 @@ export abstract class DataType<U extends number | bigint | string | boolean> {
   abstract get value(): U | U[] | { [key: string]: U | U[] };
 }
 
-export abstract class OneByte extends DataType<string | boolean | number> {
+abstract class OneByte extends DataType<string | boolean | number> {
   constructor(value?: string | boolean | number | Uint8Array | Buffer) {
     super(value);
 
@@ -49,7 +49,7 @@ export abstract class OneByte extends DataType<string | boolean | number> {
   abstract get value(): string | boolean | number;
 }
 
-export abstract class TwoBytes extends DataType<number> {
+abstract class TwoBytes extends DataType<number> {
   constructor(value?: number | Uint8Array | Buffer) {
     super(value);
     if (!Buffer.isBuffer(value) && !(value instanceof Uint8Array))
@@ -61,7 +61,7 @@ export abstract class TwoBytes extends DataType<number> {
   abstract get value(): number;
 }
 
-export abstract class FourBytes extends DataType<number> {
+abstract class FourBytes extends DataType<number> {
   constructor(value?: number | Uint8Array | Buffer) {
     super(value);
     if (!Buffer.isBuffer(value) && !(value instanceof Uint8Array))
@@ -73,7 +73,7 @@ export abstract class FourBytes extends DataType<number> {
   abstract get value(): number;
 }
 
-export abstract class EightBytes extends DataType<number | bigint> {
+abstract class EightBytes extends DataType<number | bigint> {
   constructor(value?: number | bigint | Uint8Array | Buffer) {
     super(value);
     if (!Buffer.isBuffer(value) && !(value instanceof Uint8Array))
@@ -94,7 +94,7 @@ export class Bool extends OneByte {
   }
   get value(): boolean {
     return this._buffer[0] & 1 ? true : false;
-  };
+  }
 }
 
 export class Int8 extends OneByte {
@@ -312,7 +312,7 @@ export class TArray<
   }
 }
 
-// export class TStruct<
+// class TStruct<
 //   T extends { [key: string]: DataType<U> },
 //   U extends number | bigint | string | boolean
 // > extends DataType<U> {
@@ -356,3 +356,20 @@ export class TArray<
 export type DataTypeConstructor<
   T extends DataType<number | bigint | string | boolean>
 > = new (...args: any[]) => T;
+
+export default {
+  Bool,
+  Int8,
+  Char,
+  UInt8,
+  Byte,
+  Int16,
+  UInt16,
+  Int32,
+  UInt32,
+  Int64,
+  UInt64,
+  Float,
+  Double,
+  TArray,
+};
