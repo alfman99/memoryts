@@ -1,16 +1,18 @@
 import base from '@memoryts/base';
+import { MemoryTS } from './typings';
 
-export function OpenProcess(process: string | number): ProcessHandle {
-  let processHandle: ProcessHandle;
+export function OpenProcess(process: string | number): MemoryTS.ProcessHandle {
+  let processHandle: MemoryTS.ProcessHandle;
   if (typeof process === 'string') {
     processHandle = base.openProcessName(process);
-  } else if (typeof process === 'number') {
+  } else {
     processHandle = base.openProcessPid(process);
   }
 
   // Check if process is same architecture as the current process
   const myProcessIsX64 = base.is64BitProcess();
-  if (base.isProcessX64(processHandle)) {
+  const targetProcessIsX64 = base.isProcessX64(processHandle);
+  if (targetProcessIsX64) {
     if (myProcessIsX64) {
       return processHandle;
     } else {
@@ -25,14 +27,14 @@ export function OpenProcess(process: string | number): ProcessHandle {
   }
 }
 
-export function GetProcessesRunning(): ProcessInfo[] {
+export function GetProcessesRunning(): MemoryTS.ProcessInfo[] {
   return base.listAllRunningProcesses().map(process => ({
     name: process.szExeFile,
     pid: process.th32ProcessId,
   }));
 }
 
-export function CloseProcess(process: ProcessHandle): void {
+export function CloseProcess(process: MemoryTS.ProcessHandle): void {
   base.closeProcess(process);
 }
 

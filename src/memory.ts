@@ -1,13 +1,14 @@
 import base from '@memoryts/base';
 import { DataType, DataTypeConstructor, TArray } from './memoryTypes';
+import { MemoryTS } from './typings';
 
 export function Read<
   T extends DataType<U>,
   U extends string | number | bigint | boolean
 >(
   constructor: DataTypeConstructor<T>,
-  processHandler: ProcessHandle,
-  address: MemoryAddress
+  processHandler: MemoryTS.ProcessHandle,
+  address: MemoryTS.MemoryAddress
 ): T {
   const itemType = constructor;
   const bytesOfType = new itemType().rawBuffer.length;
@@ -23,8 +24,8 @@ export function ReadArray<
 >(
   constructor: DataTypeConstructor<T>,
   length: number,
-  processHandler: ProcessHandle,
-  address: MemoryAddress
+  processHandler: MemoryTS.ProcessHandle,
+  address: MemoryTS.MemoryAddress
 ): TArray<T, U> {
   const retVal = new Array(length);
   const bytesOfType = new constructor().rawBuffer.length;
@@ -37,13 +38,18 @@ export function ReadArray<
     retVal[i] = new constructor(itemBuffer);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return new TArray(constructor, length, retVal);
 }
 
 export function Write<
   T extends DataType<U>,
   U extends string | number | bigint | boolean
->(value: T, processHandler: ProcessHandle, address: MemoryAddress): void {
+>(
+  value: T,
+  processHandler: MemoryTS.ProcessHandle,
+  address: MemoryTS.MemoryAddress
+): void {
   return base.writeBuffer(processHandler, address, value.rawBuffer);
 }
 
@@ -52,8 +58,8 @@ export function WriteArray<
   U extends string | number | bigint | boolean
 >(
   values: T[] | TArray<T, U>,
-  processHandler: ProcessHandle,
-  address: MemoryAddress
+  processHandler: MemoryTS.ProcessHandle,
+  address: MemoryTS.MemoryAddress
 ): void {
   if (values instanceof TArray) {
     return base.writeBuffer(processHandler, address, values.rawBuffer);
