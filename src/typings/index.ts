@@ -1,6 +1,6 @@
 export declare namespace MemoryTS {
-  type HANDLE = unknown;
-  type HMODULE = unknown;
+  type HANDLE = import('@memoryts/base').HANDLE;
+  type HMODULE = import('@memoryts/base').HMODULE;
 
   export type ProcessHandle = import('@memoryts/base').ExternalObject<HANDLE>;
   export type ModuleHandle = import('@memoryts/base').ExternalObject<HMODULE>;
