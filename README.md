@@ -41,7 +41,7 @@ MemoryTS is a powerful TypeScript package designed to provide developers with a 
     - [x] Arrays of primitives
 
 - [x] Pattern scanning
-  - [x] Find on memory a pattern that follows the IDA format (`3F ?? AA 64`) and return address
+  - [x] Find on memory a byte pattern that follows the IDA format (`3F ?? AA 64`) and return address
 
 - [x] Modules
   - [x] Find a module in a specified process 
